@@ -17,6 +17,18 @@ Keep the established atmosphere: **adult, playful and a little louche**. Build a
 
 These are completed design/concept tasks. The preview does not yet provide real accounts, geographical search, messaging, membership or payment.
 
+## Implementation status — 14 October 2026
+
+- [x] Preview pricing changed to one free calendar month from signup, then £25/year with manual renewal; core brand line added.
+- [x] Hosting/payment/age/privacy foundation review and provider enquiry brief prepared: [review](docs/foundation-review.md).
+- [x] Local persistent account, district-discovery and private text-message core built: [backend](backend/README.md).
+- [x] Twelve tests pass, covering the two-account flow and access/retention boundaries.
+- [ ] Suitable production host and payment account approved; age assurance integrated.
+- [ ] Polished live UI connected to backend; complete postcode dataset and secure image handling added.
+- [ ] Production retention, payment entitlement/webhooks and operational testing completed.
+
+The local API is deliberately not deployed publicly and is not wired into the GitHub Pages mockup. The fixture postcode data and adult checkbox are for fictional testing only. The first end-to-end **API** milestone is tested; the real-user website milestone remains open.
+
 ## Ordered priorities
 
 | Order | Priority | Work | Completion evidence |
@@ -49,6 +61,6 @@ These are completed design/concept tasks. The preview does not yet provide real 
 
 ## Next development objective
 
-Update pricing and brand copy, resolve the service-host/payment choices, then build the first complete flow: **two accounts → discover → request a conversation → exchange a private message**.
+Resolve production provider/content/age-assurance choices, then connect the polished interface to the tested core: **two accounts → discover → request a conversation → exchange a private message**. Add private images and real postcode coverage before live-user testing.
 
 GitHub Pages remains the static concept showcase. Real membership, sensitive exchanges and payment require suitable production hosting and backend services.
