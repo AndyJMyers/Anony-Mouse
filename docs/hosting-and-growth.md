@@ -48,7 +48,7 @@ These are **technical candidates**, not approved vendors. Content policy fit mus
 
 AWS documents ECS task autoscaling and load-balancer integration, RDS PostgreSQL, and private object access using signed S3 URLs. Cloudflare documents R2's S3 compatibility, including unsupported operations: compatibility is useful, not identical behavior. Avoid coupling the app to provider-specific object features unless needed.
 
-NovoServe explicitly advertises legal adult-content hosting on dedicated servers. This establishes a candidate's published policy, not acceptance of Anony Mouse or an economical starter plan. AWS/Cloudflare technical capability does not establish commercial/content approval. Ask vendors about the actual intended private-image exchanges rather than describing only an innocuous landing page.
+NovoServe explicitly advertises legal adult-content hosting on dedicated servers. This establishes a candidate's published policy, not acceptance of Anony-Mouses or an economical starter plan. AWS/Cloudflare technical capability does not establish commercial/content approval. Ask vendors about the actual intended private-image exchanges rather than describing only an innocuous landing page.
 
 ## Current code: honest scale assessment
 

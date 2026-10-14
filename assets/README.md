@@ -1,3 +1,3 @@
 # Artwork
 
-Anony Mouse Technicolor masthead, generated for this project.
+Anony-Mouses Technicolor masthead, generated for this project.

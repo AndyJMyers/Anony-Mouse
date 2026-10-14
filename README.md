@@ -1,6 +1,6 @@
-![Anony Mouse — Technicolor mice flirting in a glamorous jazz club](assets/anony-mouse-masthead.png)
+![Anony-Mouses — Technicolor mice flirting in a glamorous jazz club](assets/anony-mouses-masthead.png)
 
-# Anony Mouse
+# Anony-Mouses
 
 A super simple dating app for adults seeking flirtation, sex and connection.
 
@@ -38,7 +38,7 @@ See the [foundation review](docs/foundation-review.md) for hosting, payment, age
 
 ## Artwork
 
-Masthead created with AI for Anony Mouse: a glamorous adult female mouse blowing a Monroe-style kiss to a suave adult male mouse, in saturated Technicolor.
+Masthead created with AI for Anony-Mouses: a glamorous adult female mouse blowing a Monroe-style kiss to a suave adult male mouse, in saturated Technicolor.
 
 ## Ownership
 

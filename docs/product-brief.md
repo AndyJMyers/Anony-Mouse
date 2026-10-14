@@ -1,4 +1,4 @@
-# Anony Mouse — initial product brief
+# Anony-Mouses — initial product brief
 
 ## Proposition
 
@@ -63,7 +63,7 @@ The founder proposes tailored launch outreach to every UK student union and ever
 
 Student-union copy should focus on adults-only access, the price, pseudonyms and optional identity disclosure, and invite relevant editorial or society channels to consider sharing it. MP-office copy should present a constituent's software project and local creative enterprise; do not imply that the recipient personally needs an anonymous sexual encounter.
 
-Creative headline concept: “New Anony Mouse Dating App promises anonymity for all us mices!” Publishable wording should promise discretion and control of disclosure rather than guaranteed anonymity.
+Creative headline concept: “New Anony-Mouses Dating App promises anonymity for all us mices!” Publishable wording should promise discretion and control of disclosure rather than guaranteed anonymity.
 
 Launch strategy: a national cultural push from the outset, led by the distinctive mice artwork and playful proposition. Include creators/influencers, podcasts, journalists and student publications alongside tailored student-union and MP-office outreach. Local match density is a metric to improve after attention arrives, not a reason to constrain the campaign geographically. Attention and conversion remain hypotheses to test; national coverage is an ambition, not a guaranteed outcome. Campaign delivery, recipients and final copy remain to be prepared and reviewed at launch.
 
@@ -90,3 +90,7 @@ Make this plain for every adult, including younger or inexperienced patrons, wit
 Only outward codes/postcode districts such as GU2 are required, not full postcodes or addresses. Store the district code and its approximate centre (latitude/longitude); optional labels can aid display. Distance filtering compares district centres and must be described as approximate. Exact matching treats GU2 and GU20 as separate districts.
 
 A small district table or a server-side outward-code lookup cached on demand is sufficient. Postcodes.io documents an outcode endpoint with averaged district coordinates: https://postcodes.io/docs/outcode/lookup/ and https://postcodes.io/docs/outcode/schema/. An on-demand request should send only the district code, never account IDs, descriptions or messages. No full postcode database, GPS collection or house-address fields are required. Provider/data licensing and availability still need checking before production.
+
+## Brand and domain
+
+Brand: **Anony-Mouses** — the deliberate plural celebrates a community of little mices. Domain owned by the founder: **anonymouses.com**. Domain/DNS connection is a separate deployment task and has not been configured here.

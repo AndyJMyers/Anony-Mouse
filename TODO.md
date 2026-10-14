@@ -1,4 +1,4 @@
-# Anony Mouse — priorities and TODO
+# Anony-Mouses — priorities and TODO
 
 Reviewed 14 October 2026.
 

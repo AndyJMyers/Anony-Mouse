@@ -1,1 +1,1 @@
-"""Anony Mouse local development backend. Production access is deliberately disabled."""
+"""Anony-Mouses local development backend. Production access is deliberately disabled."""
