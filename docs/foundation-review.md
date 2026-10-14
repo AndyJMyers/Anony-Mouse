@@ -51,3 +51,7 @@ Anony Mouse is a proposed UK adults-only dating service with a sexual focus. Pat
 Please assess whether you support this model, including the intended possibility of consensual explicit private image exchanges. Specify required age assurance, content moderation/verification, merchant identity checks, permitted countries, retention requirements, fee/reserve structure and integration options. Please distinguish the patron's public pseudonym from any identity information required by your service.
 
 No enquiry has been sent, no account opened and no fees committed. Founder identity/business details and a final content policy are needed for actual onboarding.
+
+## Growth and transition
+
+See [hosting and growth due diligence](hosting-and-growth.md) for the hobby-to-large-service path, provider-route comparison, illustrative workload, current code limitations and migration acceptance gates. The recommended production direction is portable app instances, PostgreSQL and private S3-compatible media storage; this remains subject to vendor/content acceptance and quotes. The local SQLite backend should not be described as a million-customer architecture.

@@ -21,6 +21,9 @@ These are completed design/concept tasks. The preview does not yet provide real 
 
 - [x] Preview pricing changed to one free calendar month from signup, then £25/year with manual renewal; core brand line added.
 - [x] Hosting/payment/age/privacy foundation review and provider enquiry brief prepared: [review](docs/foundation-review.md).
+- [x] Hosting growth paths and specific local-backend limits reviewed: [hosting and growth](docs/hosting-and-growth.md).
+- [ ] Before real users: PostgreSQL persistence, pagination/indexed discovery, shared rate limits and portable private media storage.
+- [ ] Rehearse a second app instance, data migration/restore and representative burst-load tests; obtain actual provider quotes and acceptance.
 - [x] Local persistent account, district-discovery and private text-message core built: [backend](backend/README.md).
 - [x] Twelve tests pass, covering the two-account flow and access/retention boundaries.
 - [ ] Suitable production host and payment account approved; age assurance integrated.
