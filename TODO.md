@@ -24,7 +24,7 @@ These are completed design/concept tasks. The preview does not yet provide real 
 - [x] Local persistent account, district-discovery and private text-message core built: [backend](backend/README.md).
 - [x] Twelve tests pass, covering the two-account flow and access/retention boundaries.
 - [ ] Suitable production host and payment account approved; age assurance integrated.
-- [ ] Polished live UI connected to backend; complete postcode dataset and secure image handling added.
+- [ ] Polished live UI connected to backend; district lookup coverage and secure image handling added.
 - [ ] Production retention, payment entitlement/webhooks and operational testing completed.
 
 The local API is deliberately not deployed publicly and is not wired into the GitHub Pages mockup. The fixture postcode data and adult checkbox are for fictional testing only. The first end-to-end **API** milestone is tested; the real-user website milestone remains open.
@@ -61,6 +61,6 @@ The local API is deliberately not deployed publicly and is not wired into the Gi
 
 ## Next development objective
 
-Resolve production provider/content/age-assurance choices, then connect the polished interface to the tested core: **two accounts → discover → request a conversation → exchange a private message**. Add private images and real postcode coverage before live-user testing.
+Resolve production provider/content/age-assurance choices, then connect the polished interface to the tested core: **two accounts → discover → request a conversation → exchange a private message**. Add private images and real district lookup coverage before live-user testing.
 
 GitHub Pages remains the static concept showcase. Real membership, sensitive exchanges and payment require suitable production hosting and backend services.

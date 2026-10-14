@@ -78,3 +78,15 @@ Preserve this tone across the website, launch campaign and artwork: adult glamou
 Relaxed, sophisticated and open to possibilities, with an awareness of pitfalls. Designed for intelligent, experienced adults while welcoming younger adults too: 18+ throughout. Warmth, wit, clear boundaries and room for surprise.
 
 See [the prioritised TODO list](../TODO.md) for the implementation and launch sequence.
+
+## What the service offers
+
+An introduction service for adults: a hello, perhaps a drink, and room to discover mutual chemistry. No promise of romance, sex or a lasting relationship. A conversation creates no obligation to meet or continue; membership never purchases another person’s time or affection. Consent is ongoing and patrons may change their minds. Profiles and identity claims are unverified: caveat emptor, take your time and keep your eyes open.
+
+Make this plain for every adult, including younger or inexperienced patrons, without patronising them. Keep the relaxed, sophisticated, playful voice.
+
+## District lookup scope
+
+Only outward codes/postcode districts such as GU2 are required, not full postcodes or addresses. Store the district code and its approximate centre (latitude/longitude); optional labels can aid display. Distance filtering compares district centres and must be described as approximate. Exact matching treats GU2 and GU20 as separate districts.
+
+A small district table or a server-side outward-code lookup cached on demand is sufficient. Postcodes.io documents an outcode endpoint with averaged district coordinates: https://postcodes.io/docs/outcode/lookup/ and https://postcodes.io/docs/outcode/schema/. An on-demand request should send only the district code, never account IDs, descriptions or messages. No full postcode database, GPS collection or house-address fields are required. Provider/data licensing and availability still need checking before production.

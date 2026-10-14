@@ -29,7 +29,7 @@ python -m backend.server --seed-test-districts
 
 Keep the same data key if reusing the database; losing it makes encrypted data unreadable. The key is supplied through the environment, not committed. Put persistent runtime state outside the repository. Never use this developer key setup for public deployment.
 
-The server listens only at `http://127.0.0.1:8080`; it provides a JSON API, not the polished website. `--seed-test-districts` imports three deliberately approximate fixtures: GU2, GU1 and SW1A. A complete, licensed nationwide outward-postcode dataset is still required. These fixture coordinates must not be presented as production geography.
+The server listens only at `http://127.0.0.1:8080`; it provides a JSON API, not the polished website. `--seed-test-districts` imports three deliberately approximate fixtures: GU2, GU1 and SW1A. Nationwide district lookup coverage is still required, through a small outward-code table or cached district lookups. No full postcode/address database is needed. These fixture coordinates must not be presented as production geography.
 
 Tests:
 
