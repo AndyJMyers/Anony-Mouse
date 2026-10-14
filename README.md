@@ -6,7 +6,7 @@ A super simple dating app for adults seeking flirtation, sex and connection.
 
 **A little about you. A little about what you want. See who answers.**
 
-£25 to join. No further membership fees. This is the proposed business model, not an operating service.
+Latest proposal: one free month at launch, then £25 for one year, with £25 annual renewals. The live concept preview still shows the original one-off price; updating it is the first item on the [TODO list](TODO.md). This is a proposed business model, not an operating service.
 
 ## The idea
 
@@ -28,7 +28,7 @@ Open `index.html` to explore the design. GitHub Pages publishes the project from
 
 The prototype uses no analytics or browser storage. Form details, selected pictures and keepsakes remain in page memory and disappear on reload. A stylesheet requests optional Google Fonts; no form contents are sent to Google.
 
-See [the product brief](docs/product-brief.md) for the initial scope and decisions still to make.
+See [the product brief](docs/product-brief.md) for scope and [the prioritised TODO list](TODO.md) for implementation and national launch planning.
 
 ## Artwork
 
