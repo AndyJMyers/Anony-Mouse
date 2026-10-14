@@ -66,3 +66,9 @@ Student-union copy should focus on adults-only access, the price, pseudonyms and
 Creative headline concept: “New Anony Mouse Dating App promises anonymity for all us mices!” Publishable wording should promise discretion and control of disclosure rather than guaranteed anonymity.
 
 Commercial priority: concentrate the first active cohort geographically so postcode discovery has meaningful local density. A nationwide campaign should support that objective rather than scatter a handful of patrons across the country. Campaign delivery, recipients and final copy remain to be prepared and reviewed at launch.
+
+## Marketing language
+
+Core brand line: **Adult, playful and a little louche.**
+
+Preserve this tone across the website, launch campaign and artwork: adult glamour, playful humour and a touch of louche flirtation.
