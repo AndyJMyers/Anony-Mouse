@@ -67,3 +67,15 @@ The local API is deliberately not deployed publicly and is not wired into the Gi
 Resolve production provider/content/age-assurance choices, then connect the polished interface to the tested core: **two accounts → discover → request a conversation → exchange a private message**. Add private images and real district lookup coverage before live-user testing.
 
 GitHub Pages remains the static concept showcase. Real membership, sensitive exchanges and payment require suitable production hosting and backend services.
+
+## Connected lounge milestone — 14 October 2026
+
+- [x] Same-origin local member UI: two-page registration/trial, login and recovery-code handoff.
+- [x] Profile editing/hiding, district discovery with schematic pulsing markers, requests/acceptance, private text, 100 keepsakes, block/report and deletion.
+- [x] Local server serves an explicit asset allowlist; source/runtime files remain inaccessible.
+- [x] HTTP integration checks exercise separate session cookies and exclude a third patron.
+- [x] anonymouses.com configured and verified in GitHub Pages, with HTTPS enforcement.
+- [ ] Production host and PostgreSQL migration, provider approval and age assurance.
+- [ ] Private image attachments and metadata removal, national district coverage, payment integration and live-user readiness checks.
+
+The local interface uses fictional adult accounts. The Pages showcase does not call the backend or open public registration.

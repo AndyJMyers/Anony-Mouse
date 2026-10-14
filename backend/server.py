@@ -1,5 +1,6 @@
 """Loopback-only development API; deliberately cannot run as production."""
 import argparse, json, os, re, threading, time
+from pathlib import Path
 from collections import defaultdict, deque
 from http.cookies import SimpleCookie
 from wsgiref.simple_server import make_server, WSGIRequestHandler
@@ -7,6 +8,7 @@ from .service import Service, Problem, digest
 
 class App:
     def __init__(self,service,origin='http://127.0.0.1:8080'):
+        self.web_root=Path(__file__).resolve().parent.parent
         self.service,self.origin=service,origin;self.attempts=defaultdict(deque);self.lock=threading.Lock()
     def throttle(self,peer,kind,limit):
         now=time.monotonic()
@@ -24,6 +26,18 @@ class App:
             method,path=env['REQUEST_METHOD'],env.get('PATH_INFO','')
             if env.get('HTTP_HOST')!=self.origin.split('://',1)[1]:raise Problem(403,'Unexpected host')
             if method not in ('GET','POST','DELETE'):raise Problem(405,'Method not allowed')
+            # Explicit assets only. Never expose source, runtime databases, keys or arbitrary paths.
+            assets={'/':('index.html','text/html'),'/index.html':('index.html','text/html'),
+                '/members.html':('members.html','text/html'),'/members.js':('members.js','text/javascript'),
+                '/members.css':('members.css','text/css'),'/app.js':('app.js','text/javascript'),
+                '/style.css':('style.css','text/css'),'/assets/anony-mouses-masthead.png':('assets/anony-mouses-masthead.png','image/png')}
+            if method=='GET' and path in assets:
+                filename,mime=assets[path];body=(self.web_root/filename).read_bytes()
+                start('200 OK',[('Content-Type',mime),('Content-Length',str(len(body))),('Cache-Control','no-store'),
+                    ('X-Content-Type-Options','nosniff'),('Referrer-Policy','no-referrer'),
+                    ('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' blob:; connect-src 'self'; form-action 'self'; base-uri 'none'; frame-ancestors 'none'")])
+                return [body]
+            if not path.startswith('/api/'):raise Problem(404,'Page unavailable')
             if method!='GET' and env.get('HTTP_ORIGIN') not in (None,self.origin):raise Problem(403,'Unexpected origin')
             data={}
             if method=='POST':
@@ -36,10 +50,12 @@ class App:
                 if not isinstance(data,dict):raise Problem(400,'JSON object required')
             cookies=SimpleCookie();cookies.load(env.get('HTTP_COOKIE',''))
             token=cookies['am_session'].value if 'am_session' in cookies else ''
-            public=path in ['/api/register','/api/login','/api/recover','/api/health']
+            public=path in ['/api/register','/api/login','/api/recover','/api/health','/api/districts']
             uid=None if public else self.service.authenticate(token,env.get('HTTP_X_CSRF_TOKEN'),method!='GET')
             peer=env.get('REMOTE_ADDR','unknown');s=self.service
             if path=='/api/health' and method=='GET':result={'status':'local-development','production_enabled':False}
+            elif path=='/api/districts' and method=='GET':
+                with s.db() as db:result=[dict(row) for row in db.execute('SELECT code,lat,lon FROM districts ORDER BY code')]
             elif path=='/api/register' and method=='POST':self.throttle(peer,'register',10);result=s.register(data)
             elif path=='/api/login' and method=='POST':
                 self.throttle(peer,'login',30);token,result=s.login(data.get('login'),data.get('password'))
@@ -81,6 +97,6 @@ def main():
     s=Service(args.db,key,time.time)
     if args.seed_test_districts:s.seed_districts([('GU2',51.24,-.59),('GU1',51.24,-.56),('SW1A',51.50,-.14)])
     if args.purge:print(s.purge());return
-    origin=f'http://127.0.0.1:{args.port}';print(f'Local development API: {origin}/api/health. Fictional test adults only; production disabled.')
+    origin=f'http://127.0.0.1:{args.port}';print(f'Local member lounge: {origin}/members.html. Fictional test adults only; production disabled.')
     with make_server('127.0.0.1',args.port,App(s,origin),handler_class=QuietHandler) as server:server.serve_forever()
 if __name__=='__main__':main()

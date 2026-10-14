@@ -32,7 +32,7 @@ See [the product brief](docs/product-brief.md) for scope and [the prioritised TO
 
 ## Development foundation
 
-A separate [local backend](backend/README.md) now implements persistent accounts, district-based discovery and private text conversations. Twelve automated tests cover access checks, recovery, blocking, reports, expiry, deletion and the 100-keepsake limit. It is not connected to the public mockup, and production use is disabled.
+A separate [local backend](backend/README.md) now implements persistent accounts, district-based discovery and private text conversations. The connected member lounge at `http://127.0.0.1:8080/members.html` supports signup, sign-in, profile editing, schematic district discovery, accepted conversation requests, private text messages, keepsakes, blocking, local reports, recovery and deletion. Fourteen automated tests cover the core and the HTTP journey, including cookies, access isolation and static-file boundaries. Production use is disabled; the public mockup remains fictional.
 
 See the [foundation review](docs/foundation-review.md) for hosting, payment, age assurance and privacy findings and unresolved provider requirements.
 

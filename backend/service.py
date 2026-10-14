@@ -210,7 +210,8 @@ class Service:
         with self.db() as db:
             rows=db.execute('SELECT * FROM conversations WHERE sender=? OR recipient=? ORDER BY created DESC',(uid,uid)).fetchall()
             return [{'id':c['id'],'status':c['status'],'other':c['recipient'] if c['sender']==uid else c['sender'],
-                'incoming':c['recipient']==uid} for c in rows if not self.blocked(db,c['sender'],c['recipient'])]
+                'incoming':c['recipient']==uid,
+                'other_alias':db.execute('SELECT alias FROM profiles WHERE user_id=?',(c['recipient'] if c['sender']==uid else c['sender'],)).fetchone()['alias']} for c in rows if not self.blocked(db,c['sender'],c['recipient'])]
     def send(self, uid, cid, body):
         self.active(uid);body=text(body,'Message',1,2000);now=int(self.clock())
         with self.db() as db:
