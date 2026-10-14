@@ -6,7 +6,7 @@ A super simple dating app for adults seeking flirtation, sex and connection.
 
 **A little about you. A little about what you want. See who answers.**
 
-Latest proposal: one free month at launch, then £25 for one year, with £25 annual renewals. The live concept preview still shows the original one-off price; updating it is the first item on the [TODO list](TODO.md). This is a proposed business model, not an operating service.
+One month free from signup, then £25 for one year, with manual £25 annual renewals. The concept preview demonstrates this proposed business model; it does not create memberships or take payments.
 
 ## The idea
 
