@@ -2,7 +2,7 @@
 
 ## Proposition
 
-A deliberately simple, discreet adult dating service with a sexual focus. A description of who you are, a description of what you want, a public image that need not be identifiable, and private messaging. Latest pricing proposal: one free month at launch, then £25 for one year of access, with a further £25 to renew each year. This supersedes the original lifetime-fee concept; the current website still demonstrates the earlier price and needs updating before launch.
+A deliberately simple, discreet adult dating service with a sexual focus. A description of who you are, a description of what you want, a public image that need not be identifiable, and private messaging. Latest pricing proposal: one free month at launch, then £25 for one year of access, with a further £25 to renew each year. This supersedes the original lifetime-fee concept; the concept preview now reflects the annual model. Working defaults: one calendar month from each signup, manual annual renewal and no card required for the trial.
 
 ## Agreed essentials
 
