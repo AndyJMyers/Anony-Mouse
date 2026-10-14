@@ -94,3 +94,9 @@ A small district table or a server-side outward-code lookup cached on demand is 
 ## Brand and domain
 
 Brand: **Anony-Mouses** — the deliberate plural celebrates a community of little mices. Domain owned by the founder: **anonymouses.com**. Domain/DNS connection is a separate deployment task and has not been configured here.
+
+## Confirmed private-content approach
+
+The founder confirms consensual explicit image exchange between adults. The desired culture is libertarian, with minimal intervention into lawful adult tastes, fantasies and arrangements. Conversation and image consent should be explicit and revocable; blocking and reporting remain available. Enforcement focuses on concrete abuse such as underage content, non-consensual intimate imagery, coercion, harassment, fraud and unlawful material. Required provider and age-assurance obligations still apply; public pseudonyms do not require public identity validation.
+
+The £25 membership gate may add friction to misuse, but the card-free launch trial means payment is not an access safeguard for every patron. Do not treat payment as age assurance or a replacement for private-image access controls. This is a design principle, not a completed moderation or age-assurance implementation.
