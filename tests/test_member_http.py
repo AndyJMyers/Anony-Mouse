@@ -38,6 +38,8 @@ class MemberHTTPTests(unittest.TestCase):
     def create(self,client,name,district):
         payload=dict(login=name,password='Invented-test-password',alias=name.title(),bio='Invented adult',wants='A test hello',district=district,age_range='40s',adult=True,consent=True)
         code,created,_=self.request(client,'/api/register','POST',payload);self.assertEqual(code,200)
+        self.assertTrue(created['payment_required'])
+        self.service.record_month_payment(created['user_id'],'development',name+'-fixture',1000,'GBP')
         code,_,headers=self.request(client,'/api/login','POST',dict(login=name,password=payload['password']));self.assertEqual(code,200)
         self.assertIn('HttpOnly',headers['Set-Cookie'])
         code,session,_=self.request(client,'/api/session');self.assertEqual(code,200)

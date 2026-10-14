@@ -10,7 +10,10 @@ class CoreTests(unittest.TestCase):
         self.s.seed_districts([('GU2',51.24,-.59),('GU1',51.24,-.56),('SW1A',51.50,-.14)])
         self.a=self.register('alice','GU2');self.b=self.register('bob','GU1');self.c=self.register('carol','SW1A')
     def tearDown(self):self.tmp.cleanup()
-    def register(self,name,district):return self.s.register(dict(login=name,password='A-long-test-passphrase',alias=name.title(),bio='Invented test adult',wants='A test conversation',district=district,age_range='40s',adult=True,consent=True))
+    def register(self,name,district):
+        result=self.s.register(dict(login=name,password='A-long-test-passphrase',alias=name.title(),bio='Invented test adult',wants='A test conversation',district=district,age_range='40s',adult=True,consent=True))
+        self.s.record_month_payment(result['user_id'],'development',name+'-first',1000,'GBP')
+        return result
     def problem(self,status,fn,*args):
         with self.assertRaises(Problem) as c:fn(*args)
         self.assertEqual(c.exception.status,status)
@@ -42,8 +45,8 @@ class CoreTests(unittest.TestCase):
         cid=self.conversation();a,b=self.a['user_id'],self.b['user_id']
         mid=self.s.send(a,cid,'Report this')['id'];self.s.block(b,a)
         self.assertIn('id',self.s.report(b,a,'Report after blocking',mid))
-    def test_trial_expiry_and_calendar_month(self):
-        self.now=self.a['trial_ends'];self.assertFalse(self.s.membership(self.a['user_id'])['active']);self.problem(402,self.s.discover,self.a['user_id'],'GU2')
+    def test_paid_month_expiry_and_calendar_month(self):
+        self.now=self.s.membership(self.a['user_id'])['access_until'];self.assertFalse(self.s.membership(self.a['user_id'])['active']);self.problem(402,self.s.discover,self.a['user_id'],'GU2')
         t=int(datetime(2028,1,31,10,tzinfo=timezone.utc).timestamp());self.assertEqual(datetime.fromtimestamp(advance_month(t),timezone.utc).day,29)
     def test_hidden_profiles_not_discovered(self):
         data=self.s.profile(self.b['user_id']);data['visible']=False;self.s.edit_profile(self.b['user_id'],data);self.assertEqual(self.s.discover(self.a['user_id'],'GU2',10),[])
@@ -56,6 +59,17 @@ class CoreTests(unittest.TestCase):
             self.assertEqual(db.execute('SELECT count(*) FROM messages').fetchone()[0],0);self.assertEqual(self.s.dec(db.execute('SELECT evidence FROM reports').fetchone()[0]),'Reported evidence')
         self.now+=76*DAY;self.s.purge()
         with self.s.db() as db:self.assertEqual(db.execute('SELECT count(*) FROM reports').fetchone()[0],0)
+    def test_upfront_payment_no_free_access_and_idempotent_renewal(self):
+        created=self.s.register(dict(login='unpaid',password='A-long-test-passphrase',alias='Unpaid',bio='Test adult',wants='Test hello',district='GU2',age_range='40s',adult=True,consent=True))
+        uid=created['user_id'];self.assertTrue(created['payment_required']);self.assertFalse(self.s.membership(uid)['active'])
+        self.problem(402,self.s.discover,uid,'GU2')
+        self.problem(400,self.s.record_month_payment,uid,'development','wrong-price',999,'GBP')
+        first=self.s.record_month_payment(uid,'development','month-one',1000,'GBP')
+        replay=self.s.record_month_payment(uid,'development','month-one',1000,'GBP');self.assertTrue(replay['duplicate']);self.assertEqual(first['access_until'],replay['access_until'])
+        self.problem(409,self.s.record_month_payment,self.a['user_id'],'development','month-one',1000,'GBP')
+        second=self.s.record_month_payment(uid,'development','month-two',1000,'GBP');self.assertEqual(second['access_until'],advance_month(first['access_until']))
+        self.now=second['access_until']+DAY
+        renewed=self.s.record_month_payment(uid,'development','month-three',1000,'GBP');self.assertEqual(renewed['access_until'],advance_month(self.now))
     def test_production_disabled(self):
         with self.assertRaises(RuntimeError):Service(Path(self.tmp.name)/'prod.sqlite3',Fernet.generate_key(),lambda:self.now,mode='production')
     def http(self,method,path,data=None,cookie='',csrf='',origin='http://127.0.0.1:8080',host='127.0.0.1:8080'):

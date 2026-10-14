@@ -30,7 +30,7 @@ The following is an illustrative planning case, not a prediction:
 | 14-day ordinary image retention | About 3.5 TB, before replicas/backups/reports/keepsakes |
 | Worst-case image keepsakes | 1 million patrons × 100 images × 500 KB = about 50 TB |
 
-Retention controls steady-state storage, but not upload/delivery traffic. The 100-keepsake limit bounds count, so attachment size must also be bounded. Trial accounts, expired memberships, report evidence and backups need their own retention rules. The example excludes all those details.
+Retention controls steady-state storage, but not upload/delivery traffic. The 100-keepsake limit bounds count, so attachment size must also be bounded. Pending unpaid accounts, expired memberships, report evidence and backups need their own retention rules. The example excludes all those details.
 
 Polling can dominate the workload: 10,000 open clients checking every five seconds would generate 2,000 checks/second even while few messages are sent. Use an appropriate live event delivery mechanism for active conversations, backed by durable message records; reconnecting clients must be able to catch up.
 
@@ -81,7 +81,7 @@ Those stages are capability checkpoints, not fixed customer-count promises. One 
 2. Introduce storage/provider interfaces and versioned schema migrations; use PostgreSQL for the real-user backend before there is a large SQLite migration to perform.
 3. Keep media private, outside app disks, with stable object identifiers. Authenticate every access and use short-lived delivery credentials where appropriate. Public CDN caching is inappropriate for private exchanges.
 4. Keep sessions, memberships and durable messages outside individual app instances. Treat WebSocket/event connections as replaceable and make reconnection recover missed messages.
-5. Keep age-assurance and payment adapters separate. Preserve account IDs, trial dates and memberships if a provider changes. Payment portability is a separate issue: stored cards/merchant tokens may require provider cooperation; do not promise automatic transfer.
+5. Keep age-assurance and payment adapters separate. Preserve account IDs, payment/expiry dates and memberships if a provider changes. Payment portability is a separate issue: stored cards/merchant tokens may require provider cooperation; do not promise automatic transfer.
 6. Make restore/export/migration a rehearsed operation rather than trusting that data can theoretically be downloaded. Include expiry/keepsake/report rules in reconciliation.
 
 ## Concrete due-diligence gates before provider selection
@@ -108,3 +108,7 @@ No vendor enquiry has been sent, no account has been opened, no spend committed 
 - NovoServe adult-content policy: https://novoserve.com/knowledge-base/what-is-your-policy-on-adult-content
 - AWS acceptable-use policy: https://aws.amazon.com/aup/
 - Cloudflare service terms: https://www.cloudflare.com/terms/ and https://www.cloudflare.com/service-specific-terms-application-services/
+
+## Starter selection update
+
+See [provider-decision.md](provider-decision.md) for the provisional $18/month IO Zoom VPS and age/payment candidates. This narrows the pilot procurement path without changing the portability recommendation or asserting vendor approval.

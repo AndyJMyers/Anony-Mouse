@@ -2,7 +2,7 @@
 
 ## Proposition
 
-A deliberately simple, discreet adult dating service with a sexual focus. A description of who you are, a description of what you want, a public image that need not be identifiable, and private messaging. Latest pricing proposal: one free month at launch, then £25 for one year of access, with a further £25 to renew each year. This supersedes the original lifetime-fee concept; the concept preview now reflects the annual model. Working defaults: one calendar month from each signup, manual annual renewal and no card required for the trial.
+A deliberately simple, discreet adult dating service with a sexual focus. A description of who you are, a description of what you want, a public image that need not be identifiable, and private messaging. Membership is £10 per calendar month paid up front, followed by an explicit purchase for each new month. No automatic renewal or public free trial. A possible later day pass must cost no more than £1/day; it is not enabled.
 
 ## Agreed essentials
 
@@ -47,7 +47,7 @@ These are implementation proposals, not yet final decisions.
 
 ## Pilot economics
 
-100 paying patrons at £25 produce £2,500 in gross receipts per membership year, before payment fees and any applicable deductions. Renewal income depends on actual renewals; free-trial signups are not paying patrons.
+100 paying monthly patrons at £10 produce £1,000 gross receipts per month before provider fees, refunds, tax and operating costs. Renewal depends on explicit repeat purchases.
 
 The proposed £100 experiment budget should be treated as an initial infrastructure spending cap with a defined stop/review point. It does not cap development time, support labour or all costs of launching an adult dating service.
 
@@ -57,7 +57,7 @@ Short retention bounds accumulated storage. It does not eliminate delivery costs
 
 ## Launch campaign proposal
 
-Launch offer: one month free, followed by a £25 gate for one year's continued access. Proposed annual renewal: £25. Define whether the free month is personal to each signup or a fixed launch window; a full month per signup is the recommended default. Manual renewal is proposed to keep the annual price explicit and avoid surprise charges.
+Commercial entrance: pay £10 before a calendar month of access. A patron chooses whether to buy another month; no automatic charges. Registration alone does not grant discovery or messaging access. The £1/day ceiling applies to a possible future day pass, subject to payment economics.
 
 The founder proposes tailored launch outreach to every UK student union and every UK MP. This is a future launch plan, not an instruction to send the campaign before the real service is ready. No recipient list has been assembled and no messages have been sent.
 
@@ -99,4 +99,4 @@ Brand: **Anony-Mouses** — the deliberate plural celebrates a community of litt
 
 The founder confirms consensual explicit image exchange between adults. The desired culture is libertarian, with minimal intervention into lawful adult tastes, fantasies and arrangements. Conversation and image consent should be explicit and revocable; blocking and reporting remain available. Enforcement focuses on concrete abuse such as underage content, non-consensual intimate imagery, coercion, harassment, fraud and unlawful material. Required provider and age-assurance obligations still apply; public pseudonyms do not require public identity validation.
 
-The £25 membership gate may add friction to misuse, but the card-free launch trial means payment is not an access safeguard for every patron. Do not treat payment as age assurance or a replacement for private-image access controls. This is a design principle, not a completed moderation or age-assurance implementation.
+The upfront membership payment may add friction to misuse. It is not age assurance, identity validation or a replacement for private-image access controls. Keep courtesy, consent, blocking and reporting; no moral policing of consensual adult interests.

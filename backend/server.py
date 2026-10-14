@@ -1,5 +1,5 @@
 """Loopback-only development API; deliberately cannot run as production."""
-import argparse, json, os, re, threading, time
+import argparse, json, os, re, secrets, threading, time
 from pathlib import Path
 from collections import defaultdict, deque
 from http.cookies import SimpleCookie
@@ -91,12 +91,16 @@ class QuietHandler(WSGIRequestHandler):
     def log_message(self,*args):pass
 
 def main():
-    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--db',default='runtime/anony-mouse.sqlite3');p.add_argument('--port',type=int,default=8080);p.add_argument('--purge',action='store_true');p.add_argument('--seed-test-districts',action='store_true');args=p.parse_args()
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--db',default='runtime/anony-mouse.sqlite3');p.add_argument('--port',type=int,default=8080);p.add_argument('--purge',action='store_true');p.add_argument('--seed-test-districts',action='store_true');p.add_argument('--grant-test-month',metavar='LOGIN',help='Operator-only fictional GBP 10 monthly payment fixture; no money moves');args=p.parse_args()
     key=os.environ.get('ANONY_MOUSE_DATA_KEY')
     if not key:raise SystemExit('Set ANONY_MOUSE_DATA_KEY through your environment; never commit it.')
     s=Service(args.db,key,time.time)
     if args.seed_test_districts:s.seed_districts([('GU2',51.24,-.59),('GU1',51.24,-.56),('SW1A',51.50,-.14)])
     if args.purge:print(s.purge());return
+    if args.grant_test_month:
+        with s.db() as db:row=db.execute('SELECT id FROM users WHERE login=?',(args.grant_test_month.strip().lower(),)).fetchone()
+        if not row:raise SystemExit('Test login not found')
+        print(s.record_month_payment(row['id'],'development',secrets.token_hex(16),1000,'GBP'));return
     origin=f'http://127.0.0.1:{args.port}';print(f'Local member lounge: {origin}/members.html. Fictional test adults only; production disabled.')
     with make_server('127.0.0.1',args.port,App(s,origin),handler_class=QuietHandler) as server:server.serve_forever()
 if __name__=='__main__':main()

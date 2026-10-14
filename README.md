@@ -6,7 +6,7 @@ A super simple dating app for adults seeking flirtation, sex and connection.
 
 **A little about you. A little about what you want. See who answers.**
 
-One month free from signup, then £25 for one year, with manual £25 annual renewals. The concept preview demonstrates this proposed business model; it does not create memberships or take payments.
+£10 per calendar month, paid up front, with explicit manual renewal and no public free trial. A possible day pass has a £1/day ceiling but is not implemented. The concept preview demonstrates this proposed business model; it does not create memberships or take payments.
 
 ## The idea
 
@@ -32,9 +32,13 @@ See [the product brief](docs/product-brief.md) for scope and [the prioritised TO
 
 ## Development foundation
 
-A separate [local backend](backend/README.md) now implements persistent accounts, district-based discovery and private text conversations. The connected member lounge at `http://127.0.0.1:8080/members.html` supports signup, sign-in, profile editing, schematic district discovery, accepted conversation requests, private text messages, keepsakes, blocking, local reports, recovery and deletion. Fourteen automated tests cover the core and the HTTP journey, including cookies, access isolation and static-file boundaries. Production use is disabled; the public mockup remains fictional.
+A separate [local backend](backend/README.md) now implements persistent accounts, district-based discovery and private text conversations. The connected member lounge at `http://127.0.0.1:8080/members.html` supports signup, sign-in, profile editing, schematic district discovery, accepted conversation requests, private text messages, keepsakes, blocking, local reports, recovery and deletion. Fifteen automated tests cover the core and the HTTP journey, including cookies, access isolation and static-file boundaries. Production use is disabled; the public mockup remains fictional.
 
 See the [foundation review](docs/foundation-review.md) for hosting, payment, age assurance and privacy findings and unresolved provider requirements.
+
+## Provider selection and deployment
+
+See [the provider decision and cost model](docs/provider-decision.md) and [the deployment plan](docs/deployment-plan.md). Accounts now start unpaid; an internal monthly-payment ledger is tested, but real provider verification/checkout and production deployment are pending.
 
 ## Android track
 

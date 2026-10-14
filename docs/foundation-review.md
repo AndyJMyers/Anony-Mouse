@@ -8,7 +8,7 @@ Preserve the existing static design. Keep production backend code portable rathe
 
 Stripe distinguishes restricted dating services from prohibited adult content/services. Online dating is a restricted category; adult live-chat features and sexually explicit content designed for sexual gratification are in prohibited categories. Given Anony-Mouses's stated sexual focus and planned DM image exchanges, treating a normal Stripe signup as automatic approval would be a mistake. Obtain an explicit classification of the complete service.
 
-CCBill explicitly advertises support for adult dating and UK payment services. It is the first candidate for a quote and business-model assessment, not an approved merchant account. Obtain onboarding fees, card-scheme fees, transaction rates, rolling reserves, payout timing, minimum charges, refund/chargeback costs and any content-verification obligations. A £25/year offer cannot be assessed using an ordinary card-processing rate alone.
+CCBill explicitly advertises support for adult dating and UK payment services. It is the first candidate for a quote and business-model assessment, not an approved merchant account. Obtain onboarding fees, card-scheme fees, transaction rates, rolling reserves, payout timing, minimum charges, refund/chargeback costs and any content-verification obligations. A £10/month offer cannot be assessed using an ordinary card-processing rate alone.
 
 Sources:
 - https://stripe.com/legal/restricted-businesses
@@ -29,7 +29,7 @@ Sources:
 
 Ofcom's dating-service guidance says highly effective age assurance is required where pornography is permitted, including in private messages. A checkbox alone cannot be the planned gate for such a service. Preserve pseudonyms and unverified public identity claims while separating them from age assurance. Ideally the service receives an over-18 attestation and does not retain identity documents. Actual provider integration, data flows and suitability remain to be chosen.
 
-The image/content policy must be explicit before provider applications: non-explicit dating imagery only, or consensual explicit adult exchanges with the corresponding operational requirements. Do not quietly assume the former when the founder intends the latter. Age assurance needs to cover a card-free trial too.
+The image/content policy must be explicit before provider applications: non-explicit dating imagery only, or consensual explicit adult exchanges with the corresponding operational requirements. Do not quietly assume the former when the founder intends the latter. Age assurance must cover every patron before sensitive access; payment is not a substitute.
 
 Source:
 - https://www.ofcom.org.uk/online-safety/illegal-and-harmful-content/dating-and-social-discovery-know-the-online-safety-risks-rules-and-how-to-comply
@@ -46,7 +46,7 @@ Sources:
 
 ## Provider enquiry brief — ready to adapt, not sent
 
-Anony-Mouses is a proposed UK adults-only dating service with a sexual focus. Patrons use pseudonyms, an outward postcode and a profile image, and exchange private text and images after a conversation request is accepted. Identities presented to other patrons are unverified. The intended membership is one calendar month free without taking card details, followed by an optional £25 purchase for a year's access and manual annual renewal. Ordinary messages expire after 14 days; up to 100 messages per patron may be retained as keepsakes. Blocking, reporting, account deletion and separate reported-content retention are planned.
+Anony-Mouses is a proposed UK adults-only dating service with a sexual focus. Patrons use pseudonyms, an outward postcode and a profile image, and exchange private text and images after a conversation request is accepted. Identities presented to other patrons are unverified. The intended membership is £10 for a calendar month paid up front, with an explicit new purchase for each renewal and no public free trial. A possible day pass is capped at £1/day and is not yet enabled. Ordinary messages expire after 14 days; up to 100 messages per patron may be retained as keepsakes. Blocking, reporting, account deletion and separate reported-content retention are planned.
 
 Please assess whether you support this model, including the intended possibility of consensual explicit private image exchanges. Specify required age assurance, content moderation/verification, merchant identity checks, permitted countries, retention requirements, fee/reserve structure and integration options. Please distinguish the patron's public pseudonym from any identity information required by your service.
 
@@ -55,3 +55,7 @@ No enquiry has been sent, no account opened and no fees committed. Founder ident
 ## Growth and transition
 
 See [hosting and growth due diligence](hosting-and-growth.md) for the hobby-to-large-service path, provider-route comparison, illustrative workload, current code limitations and migration acceptance gates. The recommended production direction is portable app instances, PostgreSQL and private S3-compatible media storage; this remains subject to vendor/content acceptance and quotes. The local SQLite backend should not be described as a million-customer architecture.
+
+## Provider selection update
+
+See [the provider decision](provider-decision.md) for the current IO Zoom/Didit/CCBill shortlist, sourced tariffs and conditional card-scheme fees. No accounts or purchases have been made.

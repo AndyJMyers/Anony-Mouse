@@ -50,6 +50,9 @@ class Service:
             CREATE TABLE IF NOT EXISTS users(id TEXT PRIMARY KEY, login TEXT UNIQUE NOT NULL, salt TEXT NOT NULL,
                 password TEXT NOT NULL, recovery TEXT NOT NULL, joined INTEGER NOT NULL, trial_end INTEGER NOT NULL,
                 paid_until INTEGER NOT NULL DEFAULT 0, consent_version TEXT NOT NULL);
+            CREATE TABLE IF NOT EXISTS payment_events(provider TEXT NOT NULL, event_id TEXT NOT NULL,
+                user_id TEXT REFERENCES users(id) ON DELETE CASCADE, amount_minor INTEGER NOT NULL,
+                currency TEXT NOT NULL, access_until INTEGER NOT NULL, PRIMARY KEY(provider,event_id));
             CREATE TABLE IF NOT EXISTS sessions(token TEXT PRIMARY KEY, user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
                 csrf TEXT NOT NULL, expires INTEGER NOT NULL);
             CREATE TABLE IF NOT EXISTS profiles(user_id TEXT PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
@@ -101,10 +104,10 @@ class Service:
         with self.db() as db:
             try:
                 db.execute('INSERT INTO users VALUES(?,?,?,?,?,?,?,?,?)',
-                    (uid,login,salt,password_hash(pw,salt),digest(recovery),now,advance_month(now),0,'development-v1'))
+                    (uid,login,salt,password_hash(pw,salt),digest(recovery),now,0,0,'development-v2'))
             except sqlite3.IntegrityError: raise Problem(409,'That login is unavailable')
             db.execute('INSERT INTO profiles VALUES(?,?,?,?,?,?,1)', (uid,*profile))
-        return {'user_id':uid,'recovery_code':recovery,'trial_ends':advance_month(now),'development_only':True}
+        return {'user_id':uid,'recovery_code':recovery,'payment_required':True,'development_only':True}
     def validate_profile(self, data):
         alias = text(data.get('alias'), 'Chosen name', 1, 30)
         bio = text(data.get('bio'), 'About you', 1, 300)
@@ -147,8 +150,32 @@ class Service:
     def membership(self, uid):
         with self.db() as db: row=db.execute('SELECT trial_end,paid_until FROM users WHERE id=?',(uid,)).fetchone()
         if not row: raise Problem(401,'Account unavailable')
-        until=max(row['trial_end'],row['paid_until'])
-        return {'active':until>self.clock(),'access_until':until,'trial_ends':row['trial_end'],'paid_until':row['paid_until']}
+        until=row['paid_until']
+        return {'active':until>self.clock(),'access_until':until,'paid_until':row['paid_until'],'monthly_price_minor':1000,'currency':'GBP','automatic_renewal':False}
+    def record_month_payment(self, uid, provider, event_id, amount_minor, currency):
+        """Trusted server-side ledger, not a payment-verification endpoint.
+
+        Future provider adapters must authenticate/reconcile payment and its order
+        before calling this. The loopback test operator uses development fixtures.
+        There is no browser/API path that can grant paid access.
+        """
+        provider=text(provider,'Provider',1,40);event_id=text(event_id,'Payment event',1,200)
+        if type(amount_minor) is not int or amount_minor!=1000 or currency!='GBP':
+            raise Problem(400,'Expected a confirmed GBP 10.00 monthly payment')
+        with self.db() as db:
+            db.execute('BEGIN IMMEDIATE')
+            existing=db.execute('SELECT * FROM payment_events WHERE provider=? AND event_id=?',(provider,event_id)).fetchone()
+            if existing:
+                if existing['user_id']!=uid or existing['amount_minor']!=amount_minor or existing['currency']!=currency:
+                    raise Problem(409,'Payment event does not match this account')
+                return {'access_until':existing['access_until'],'duplicate':True}
+            user=db.execute('SELECT paid_until FROM users WHERE id=?',(uid,)).fetchone()
+            if not user:raise Problem(404,'Account unavailable')
+            until=advance_month(max(int(self.clock()),user['paid_until']))
+            db.execute('INSERT INTO payment_events VALUES(?,?,?,?,?,?)',(provider,event_id,uid,amount_minor,currency,until))
+            db.execute('UPDATE users SET paid_until=? WHERE id=?',(until,uid))
+        return {'access_until':until,'duplicate':False}
+
     def active(self, uid):
         if not self.membership(uid)['active']: raise Problem(402,'Membership has expired; manual renewal is required')
     def profile(self, uid):
@@ -172,7 +199,7 @@ class Service:
             centre=db.execute('SELECT lat,lon FROM districts WHERE code=?',(district,)).fetchone()
             if not centre: raise Problem(400,'District is not in the imported postcode dataset')
             rows=db.execute('''SELECT p.user_id,p.district,d.lat,d.lon FROM profiles p JOIN districts d ON p.district=d.code
-                JOIN users u ON p.user_id=u.id WHERE p.visible=1 AND p.user_id!=? AND max(u.trial_end,u.paid_until)>?''',(uid,int(self.clock()))).fetchall()
+                JOIN users u ON p.user_id=u.id WHERE p.visible=1 AND p.user_id!=? AND u.paid_until>?''',(uid,int(self.clock()))).fetchall()
             found=[]
             for p in rows:
                 km=distance(centre,(p['lat'],p['lon']))

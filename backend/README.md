@@ -12,7 +12,7 @@ This Python API is for fictional adult test accounts on your own computer. The m
 - Access checks preventing a third account from reading or saving another conversation.
 - Server-side encryption at rest for profile descriptions, text messages and report evidence. **Not end-to-end encryption**; the server holds the key.
 - Blocking, reporting (including after blocking), and account deletion.
-- One calendar month of trial access, using UTC and clipping month-end anniversaries.
+- Accounts start unpaid. A trusted internal £10 GBP monthly-payment ledger grants a calendar month, clips month-end dates and ignores duplicate provider events. No payment-grant HTTP endpoint exists. The ledger does not verify actual provider payments.
 - Text messages expire after 14 days. Only the individual patron who saves an expired message can read their keepsake; saving does not retain it in the other person's inbox. Limit: 100 per patron.
 
 ## Run locally
@@ -48,13 +48,13 @@ Reads also run expiry cleanup, but a real service needs a scheduled cleanup task
 ## Try the connected lounge
 
 1. Start the server with `--seed-test-districts`, then open `/members.html` at the loopback address above.
-2. Choose **Come on in**, enter invented adult details, then start the test month. Save the one-time recovery code.
+2. Choose **Come on in**, enter invented adult details, then create the unpaid test account. Save the one-time recovery code.
 3. Open a separate browser profile or a private window for a second invented account. Ordinary tabs share a session cookie.
-4. Search GU2 or GU1, send a hello, and accept it from the second account's Conversations view.
+4. Add an operator-only fictional payment fixture for each login using `python -m backend.server --grant-test-month LOGIN` (same database and data key; no money moves). Then search GU2 or GU1, send a hello, and accept it from the second account's Conversations view.
 5. Exchange text, save/remove keepsakes and refresh or reload to confirm persistence. The open Conversations view polls every 10 seconds while visible.
 6. Edit/hide profiles, block, submit a local test report, recover access, or delete an account using the corresponding controls.
 
-No public signup, payments, image uploads or full district coverage is enabled. Reports remain local test records, without a monitored support inbox. No real personal or sexual data should be entered.
+No public signup, real payments, image uploads or full district coverage is enabled. Reports remain local test records, without a monitored support inbox. No real personal or sexual data should be entered.
 
 ## API
 
@@ -67,7 +67,7 @@ All POST requests require `Content-Type: application/json`. Authenticated mutati
 | `/api/register` | POST | login, password (12+ characters), alias, bio, wants, district, age_range, adult=true, consent=true |
 | `/api/login` | POST | login, password; returns CSRF token and cookie |
 | `/api/recover` | POST | login, recovery_code, new password |
-| `/api/session` | GET | Own profile, trial status and CSRF token |
+| `/api/session` | GET | Own profile, monthly access status and CSRF token |
 | `/api/logout` | POST | Revoke current session |
 | `/api/profile` | GET / POST | Read or edit own profile |
 | `/api/discover` | POST | district, radius_km (1–200) |

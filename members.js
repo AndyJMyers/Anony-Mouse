@@ -36,7 +36,7 @@ async function enter() {
   $('entrance').hidden = true; $('account').hidden = false; $('logout').hidden = false;
   $('recoveryCode').textContent = ''; draft = null;
   $('welcome').textContent = 'Welcome, ' + session.profile.alias + '.';
-  $('membership').textContent = session.membership.active ? 'Access until ' + date(session.membership.access_until) : 'Trial ended · payments are not available in this test';
+  $('membership').textContent = session.membership.active ? 'Access until ' + date(session.membership.access_until) : 'Payment required · checkout is not connected in this test';
   for (const field of ['alias','bio','wants','district','age_range']) $('editProfile').elements[field].value = session.profile[field];
   $('editProfile').elements.visible.checked = session.profile.visible;
   $('search').elements.district.value = session.profile.district;
@@ -64,7 +64,7 @@ $('startTrial').addEventListener('click', () => run(async () => {
   // Once registration succeeds, never offer a second submission, even if login fails.
   const credentials = { login:draft.login, password:draft.password }; draft = null; $('signup').reset();
   showCode(result.recovery_code, async () => { await api('login','POST',credentials); await enter(); });
-  status('Test account created. Save your recovery code before entering.');
+  status('Unpaid test account created. Save your recovery code. The operator can add a fictional paid-month fixture locally.');
 }));
 $('continueEntrance').addEventListener('click', () => run(async () => { const action = entranceAction; entranceAction = null; $('recoveryCode').textContent = ''; if (action) await action(); else tab('signin'); }));
 $('recovery').addEventListener('submit', e => { e.preventDefault(); run(async () => { const result = await api('recover','POST',formData(e.target)); e.target.reset(); showCode(result.recovery_code, async () => { tab('signin'); status('Access recovered. Sign in with your new password.'); }); status('Recovery succeeded. Save the replacement code.'); }); });
