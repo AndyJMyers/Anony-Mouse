@@ -22,7 +22,11 @@ Discretion from the neighbours is the aim. Patrons control what they disclose, b
 
 ## Project status
 
-Concept and initial repository only. No working app, payment collection or production messaging service yet.
+Interactive static concept preview: fictional postcode matches, scripted chat, session-only keepsakes and a two-step signup demo. No real accounts, payment collection or production messaging service yet.
+
+Open `index.html` to explore the design. GitHub Pages publishes the project from the root of `main`. The commercial service will require suitable backend hosting; GitHub Pages is not the paid-service host.
+
+The prototype uses no analytics or browser storage. Form details, selected pictures and keepsakes remain in page memory and disappear on reload. A stylesheet requests optional Google Fonts; no form contents are sent to Google.
 
 See [the product brief](docs/product-brief.md) for the initial scope and decisions still to make.
 
