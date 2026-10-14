@@ -30,6 +30,12 @@ The prototype uses no analytics or browser storage. Form details, selected pictu
 
 See [the product brief](docs/product-brief.md) for scope and [the prioritised TODO list](TODO.md) for implementation and national launch planning.
 
+## Development foundation
+
+A separate [local backend](backend/README.md) now implements persistent accounts, district-based discovery and private text conversations. Twelve automated tests cover access checks, recovery, blocking, reports, expiry, deletion and the 100-keepsake limit. It is not connected to the public mockup, and production use is disabled.
+
+See the [foundation review](docs/foundation-review.md) for hosting, payment, age assurance and privacy findings and unresolved provider requirements.
+
 ## Artwork
 
 Masthead created with AI for Anony Mouse: a glamorous adult female mouse blowing a Monroe-style kiss to a suave adult male mouse, in saturated Technicolor.
