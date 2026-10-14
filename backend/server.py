@@ -39,8 +39,22 @@ class App:
                 return [body]
             if not path.startswith('/api/'):raise Problem(404,'Page unavailable')
             if method!='GET' and env.get('HTTP_ORIGIN') not in (None,self.origin):raise Problem(403,'Unexpected origin')
-            data={}
-            if method=='POST':
+            image_upload=method=='POST' and re.fullmatch(r'/api/conversations/([a-f0-9]{32})/images',path)
+            cookies=SimpleCookie();cookies.load(env.get('HTTP_COOKIE',''))
+            token=cookies['am_session'].value if 'am_session' in cookies else ''
+            public=path in ['/api/register','/api/login','/api/recover','/api/health','/api/districts']
+            uid=None if public else self.service.authenticate(token,env.get('HTTP_X_CSRF_TOKEN'),method!='GET')
+            data={};raw=None
+            if image_upload:
+                from .images import MAX_UPLOAD
+                self.throttle(uid,'image',60)
+                if env.get('CONTENT_TYPE','').split(';')[0] not in ('image/jpeg','image/png','image/webp'):raise Problem(415,'Choose JPG, PNG or WebP')
+                try:length=int(env.get('CONTENT_LENGTH') or '0')
+                except ValueError:raise Problem(400,'Invalid request size')
+                if not 0<length<=MAX_UPLOAD:raise Problem(413,'Choose an image up to 5 MB')
+                raw=env['wsgi.input'].read(length)
+                if len(raw)!=length:raise Problem(400,'Incomplete image upload')
+            elif method=='POST':
                 if env.get('CONTENT_TYPE','').split(';')[0]!='application/json':raise Problem(415,'Use application/json')
                 try:length=int(env.get('CONTENT_LENGTH') or '0')
                 except ValueError:raise Problem(400,'Invalid request size')
@@ -48,12 +62,15 @@ class App:
                 try:data=json.loads(env['wsgi.input'].read(length))
                 except (ValueError,UnicodeDecodeError):raise Problem(400,'Invalid JSON')
                 if not isinstance(data,dict):raise Problem(400,'JSON object required')
-            cookies=SimpleCookie();cookies.load(env.get('HTTP_COOKIE',''))
-            token=cookies['am_session'].value if 'am_session' in cookies else ''
-            public=path in ['/api/register','/api/login','/api/recover','/api/health','/api/districts']
-            uid=None if public else self.service.authenticate(token,env.get('HTTP_X_CSRF_TOKEN'),method!='GET')
             peer=env.get('REMOTE_ADDR','unknown');s=self.service
-            if path=='/api/health' and method=='GET':result={'status':'local-development','production_enabled':False}
+            if (m:=re.fullmatch(r'/api/images/([a-f0-9]{32})',path)) and method=='GET':
+                body=s.image(uid,m[1])
+                start('200 OK',[('Content-Type','image/jpeg'),('Content-Length',str(len(body))),
+                    ('Cache-Control','private, no-store'),('Pragma','no-cache'),('X-Content-Type-Options','nosniff'),
+                    ('Content-Disposition','inline; filename="image.jpg"'),('Referrer-Policy','no-referrer'),
+                    ('Content-Security-Policy',"default-src 'none'; frame-ancestors 'none'")]);return [body]
+            if image_upload:result=s.send_image(uid,image_upload[1],raw)
+            elif path=='/api/health' and method=='GET':result={'status':'local-development','production_enabled':False}
             elif path=='/api/districts' and method=='GET':
                 with s.db() as db:result=[dict(row) for row in db.execute('SELECT code,lat,lon FROM districts ORDER BY code')]
             elif path=='/api/register' and method=='POST':self.throttle(peer,'register',10);result=s.register(data)

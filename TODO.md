@@ -98,3 +98,13 @@ Visual excitement comes from the mice, colour, gentle pulses and optional playfu
 - [x] Concrete [deployment plan](docs/deployment-plan.md), preserving GitHub Pages and proposing same-origin app.anonymouses.com.
 - [ ] Obtain provider acceptance, billing classification/quote, required operator accounts and credentials.
 - [ ] Real age/payment adapters, PostgreSQL/production serving, private media, verified backup restore and real-adult trial.
+
+## Private-image checkpoint
+
+- [x] Patron-selected pictures in accepted local conversations; no pre-supplied private imagery.
+- [x] Server byte/pixel/format limits, metadata removal and encrypted attachment storage.
+- [x] Authenticated delivery, participant isolation, blocking, shared 100-keepsake limit and 14-day expiry.
+- [x] Separate reported-image evidence retention and account-deletion/expiry cleanup checks.
+- [ ] Production private object store, isolated decoding workers, live age/content/provider requirements and backup retention.
+
+Twenty-two tests now cover the local core/HTTP interface. The real service remains undeployed; image functionality is available only in the local test lounge.

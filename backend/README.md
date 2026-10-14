@@ -8,12 +8,12 @@ This Python API is for fictional adult test accounts on your own computer. The m
 - A separate chosen profile name and private login handle; no email or phone required in this development model.
 - A one-use recovery code, rotated on recovery; old sessions are revoked.
 - Editable profiles, hiding, and distance-based discovery using imported **outward postcode centres**.
-- Conversation requests and acceptance before text messaging.
+- Conversation requests and acceptance before text/image messaging.
 - Access checks preventing a third account from reading or saving another conversation.
 - Server-side encryption at rest for profile descriptions, text messages and report evidence. **Not end-to-end encryption**; the server holds the key.
 - Blocking, reporting (including after blocking), and account deletion.
 - Accounts start unpaid. A trusted internal £10 GBP monthly-payment ledger grants a calendar month, clips month-end dates and ignores duplicate provider events. No payment-grant HTTP endpoint exists. The ledger does not verify actual provider payments.
-- Text messages expire after 14 days. Only the individual patron who saves an expired message can read their keepsake; saving does not retain it in the other person's inbox. Limit: 100 per patron.
+- Text and image messages expire after 14 days. Only the individual patron who saves an expired message can read their keepsake; saving does not retain it in the other person's inbox. Limit: 100 per patron.
 
 ## Run locally
 
@@ -51,14 +51,28 @@ Reads also run expiry cleanup, but a real service needs a scheduled cleanup task
 2. Choose **Come on in**, enter invented adult details, then create the unpaid test account. Save the one-time recovery code.
 3. Open a separate browser profile or a private window for a second invented account. Ordinary tabs share a session cookie.
 4. Add an operator-only fictional payment fixture for each login using `python -m backend.server --grant-test-month LOGIN` (same database and data key; no money moves). Then search GU2 or GU1, send a hello, and accept it from the second account's Conversations view.
-5. Exchange text, save/remove keepsakes and refresh or reload to confirm persistence. The open Conversations view polls every 10 seconds while visible.
+5. Exchange text and test pictures, save/remove keepsakes and refresh or reload to confirm persistence. The open Conversations view polls every 10 seconds while visible.
 6. Edit/hide profiles, block, submit a local test report, recover access, or delete an account using the corresponding controls.
 
-No public signup, real payments, image uploads or full district coverage is enabled. Reports remain local test records, without a monitored support inbox. No real personal or sexual data should be entered.
+No public signup, real payments or full district coverage is enabled. Private image uploads work only in the loopback test lounge. Reports remain local test records, without a monitored support inbox. No real personal or sexual data should be entered.
+
+## Private test pictures
+
+- Accepted conversations only; a third account cannot retrieve the bytes even with the URL.
+- Still JPG/PNG/WebP, up to 5 MB and 12 million decoded pixels. Animated or invalid inputs are rejected by the server.
+- Re-encoded to a fresh JPEG, at most 1600 pixels on the longest edge and 1 MB. Orientation is applied, source EXIF/GPS/text/ICC/XMP and filenames are discarded; transparency is flattened onto white.
+- Encrypted attachment bytes are kept in SQLite for this local checkpoint. This is not end-to-end encryption or the final production media store.
+- 60 upload attempts/hour per test account and a 100 MB encrypted attachment allowance per sender. Report evidence follows a separate rule.
+- Image messages count as one of the same 100 keepsakes. Expired bytes are only accessible to the individual keeper; removing the last expired keepsake deletes the ordinary attachment.
+- Blocking removes access for both participants; account deletion cascades through shared attachments. A reported image is copied into encrypted evidence for the separate development-only 90-day retention, including after account deletion, then purged.
+- Retrieval uses authenticated `/api/images/{message_id}` with private/no-store headers. No original files, public uploads, user-controlled filesystem paths or source filenames are retained.
+- The recipient taps **View picture** before display. This does not prevent screenshots or copying. Unchanged conversation polls do not reload image bytes.
+
+These checks do not certify age, depicted-person consent or lawful content. Live age assurance/provider acceptance and an operational content/report process remain required. Use synthetic test images only. Production processing also needs worker/resource isolation and a backup retention policy; the present in-process decoder is not a public upload service.
 
 ## API
 
-All POST requests require `Content-Type: application/json`. Authenticated mutations also require the `X-CSRF-Token` returned by login. Sessions use an HttpOnly, SameSite=Strict cookie. No CORS is enabled.
+JSON POST requests require `Content-Type: application/json`; the image-upload route accepts raw bytes with `image/jpeg`, `image/png` or `image/webp`. Authenticated mutations also require the `X-CSRF-Token` returned by login. Sessions use an HttpOnly, SameSite=Strict cookie. No CORS is enabled.
 
 | Endpoint | Method | Purpose |
 | --- | --- | --- |
@@ -74,6 +88,8 @@ All POST requests require `Content-Type: application/json`. Authenticated mutati
 | `/api/conversations` | GET / POST | List conversations or request one with target account ID |
 | `/api/conversations/{id}/accept` | POST | Recipient accepts |
 | `/api/conversations/{id}/messages` | GET / POST | Read or send body text |
+| `/api/conversations/{id}/images` | POST | Raw binary JPG/PNG/WebP upload with authenticated cookie and CSRF header |
+| `/api/images/{message_id}` | GET | Authenticated, per-patron visibility check and private image bytes |
 | `/api/keepsakes` | GET | Own saved messages |
 | `/api/keepsakes/{id}` | POST / DELETE | Save or remove a keepsake |
 | `/api/block` | POST | Block target account ID |
@@ -82,6 +98,6 @@ All POST requests require `Content-Type: application/json`. Authenticated mutati
 
 ## Still required
 
-Production hosting, age assurance, provider checkout/webhooks, paid entitlement, image upload/access control/metadata stripping, national postcode data, production UI deployment, moderation tools, durable rate limits, a production HTTP server, TLS, Secure cookies, encryption-key management/rotation, backup/recovery and operating procedures.
+Production hosting, age assurance, provider checkout/webhooks, paid entitlement, production private object storage and image-worker isolation, national postcode data, production UI deployment, moderation tools, durable rate limits, a production HTTP server, TLS, Secure cookies, encryption-key management/rotation, backup/recovery and operating procedures.
 
 An `adult=true` flag is only a fictional-test assertion. It is **not** production age assurance. There is no payment or age-verification override endpoint. Attempting to initialise the service in production mode fails closed. The development HTTP server must not be exposed through a reverse proxy or port forwarding.

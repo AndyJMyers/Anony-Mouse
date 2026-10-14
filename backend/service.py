@@ -63,12 +63,16 @@ class Service:
                 recipient TEXT REFERENCES users(id) ON DELETE CASCADE, status TEXT NOT NULL, created INTEGER NOT NULL);
             CREATE TABLE IF NOT EXISTS messages(id TEXT PRIMARY KEY, conversation TEXT REFERENCES conversations(id) ON DELETE CASCADE,
                 sender TEXT REFERENCES users(id) ON DELETE CASCADE, body BLOB NOT NULL, created INTEGER NOT NULL, expires INTEGER NOT NULL);
+            CREATE TABLE IF NOT EXISTS attachments(message_id TEXT PRIMARY KEY REFERENCES messages(id) ON DELETE CASCADE,
+                data BLOB NOT NULL, width INTEGER NOT NULL, height INTEGER NOT NULL);
             CREATE TABLE IF NOT EXISTS keepsakes(user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
                 message_id TEXT REFERENCES messages(id) ON DELETE CASCADE, PRIMARY KEY(user_id,message_id));
             CREATE TABLE IF NOT EXISTS blocks(user_id TEXT REFERENCES users(id) ON DELETE CASCADE,
                 target TEXT REFERENCES users(id) ON DELETE CASCADE, PRIMARY KEY(user_id,target));
             CREATE TABLE IF NOT EXISTS reports(id TEXT PRIMARY KEY, reporter TEXT, target TEXT,
                 reason BLOB NOT NULL, evidence BLOB, created INTEGER NOT NULL, expires INTEGER NOT NULL);
+            CREATE TABLE IF NOT EXISTS report_attachments(report_id TEXT PRIMARY KEY REFERENCES reports(id) ON DELETE CASCADE,
+                data BLOB NOT NULL, width INTEGER NOT NULL, height INTEGER NOT NULL);
             CREATE INDEX IF NOT EXISTS message_expiry ON messages(expires);
             CREATE INDEX IF NOT EXISTS session_expiry ON sessions(expires);
             ''')
@@ -246,6 +250,38 @@ class Service:
             if c['status']!='accepted': raise Problem(403,'Wait for the recipient to accept')
             mid=secrets.token_hex(16);db.execute('INSERT INTO messages VALUES(?,?,?,?,?,?)',(mid,cid,uid,self.enc(body),now,now+14*DAY))
         return {'id':mid,'expires':now+14*DAY}
+    def send_image(self, uid, cid, raw):
+        from .images import normalise_image
+        self.active(uid)
+        with self.db() as db:
+            c=self.conversation(db,uid,cid)
+            if c['status']!='accepted':raise Problem(403,'Wait for the recipient to accept')
+        pixels,width,height=normalise_image(raw)
+        encrypted=self.cipher.encrypt(pixels);now=int(self.clock());mid=secrets.token_hex(16)
+        self.purge()
+        with self.db() as db:
+            db.execute('BEGIN IMMEDIATE')
+            c=self.conversation(db,uid,cid)
+            if c['status']!='accepted':raise Problem(403,'Wait for the recipient to accept')
+            used=db.execute('SELECT coalesce(sum(length(a.data)),0) FROM attachments a JOIN messages m ON m.id=a.message_id WHERE m.sender=?',(uid,)).fetchone()[0]
+            if used+len(encrypted)>100*1024*1024:raise Problem(409,'Local image storage allowance is full')
+            db.execute('INSERT INTO messages VALUES(?,?,?,?,?,?)',(mid,cid,uid,self.enc(''),now,now+14*DAY))
+            db.execute('INSERT INTO attachments VALUES(?,?,?,?)',(mid,encrypted,width,height))
+        return {'id':mid,'expires':now+14*DAY,'image':{'url':'/api/images/'+mid,'width':width,'height':height}}
+    def image(self, uid, mid):
+        self.purge()
+        with self.db() as db:
+            m=db.execute('SELECT * FROM messages WHERE id=?',(mid,)).fetchone()
+            if not m:raise Problem(404,'Image unavailable')
+            self.conversation(db,uid,m['conversation'])
+            if m['expires']<=self.clock() and not db.execute('SELECT 1 FROM keepsakes WHERE user_id=? AND message_id=?',(uid,mid)).fetchone():raise Problem(404,'Image expired')
+            a=db.execute('SELECT data FROM attachments WHERE message_id=?',(mid,)).fetchone()
+            if not a:raise Problem(404,'Image unavailable')
+        return self.cipher.decrypt(a['data'])
+    def image_details(self, db, mid):
+        a=db.execute('SELECT width,height FROM attachments WHERE message_id=?',(mid,)).fetchone()
+        return {'url':'/api/images/'+mid,'width':a['width'],'height':a['height']} if a else None
+
     def messages(self, uid, cid):
         self.purge()
         with self.db() as db:
@@ -253,7 +289,7 @@ class Service:
             rows=db.execute('''SELECT m.*,k.message_id saved FROM messages m LEFT JOIN keepsakes k
                 ON k.message_id=m.id AND k.user_id=? WHERE conversation=? AND (expires>? OR k.message_id IS NOT NULL)
                 ORDER BY created,m.id''',(uid,cid,int(self.clock()))).fetchall()
-        return [{'id':m['id'],'sender':m['sender'],'body':self.dec(m['body']),'expires':m['expires'],'saved':bool(m['saved'])} for m in rows]
+            return [{'id':m['id'],'sender':m['sender'],'body':self.dec(m['body']),'expires':m['expires'],'saved':bool(m['saved']),'image':self.image_details(db,m['id'])} for m in rows]
     def keep(self, uid, mid):
         self.active(uid)
         with self.db() as db:
@@ -273,7 +309,7 @@ class Service:
             for m in rows:
                 try: self.conversation(db,uid,m['conversation'])
                 except Problem: continue
-                allowed.append({'id':m['id'],'body':self.dec(m['body']),'sender':m['sender']})
+                allowed.append({'id':m['id'],'body':self.dec(m['body']),'sender':m['sender'],'image':self.image_details(db,m['id'])})
         return allowed
     def unkeep(self, uid, mid):
         with self.db() as db: db.execute('DELETE FROM keepsakes WHERE user_id=? AND message_id=?',(uid,mid))
@@ -285,7 +321,7 @@ class Service:
             db.execute('INSERT OR IGNORE INTO blocks VALUES(?,?)',(uid,target))
         return {'blocked':True}
     def report(self, uid, target, reason, message_id=None):
-        reason=text(reason,'Reason',1,1000);evidence=None
+        reason=text(reason,'Reason',1,1000);evidence=None;attachment=None
         with self.db() as db:
             if not db.execute('SELECT 1 FROM users WHERE id=?',(target,)).fetchone(): raise Problem(404,'Profile unavailable')
             if message_id:
@@ -295,9 +331,11 @@ class Service:
                 if m['sender']!=target: raise Problem(400,'Reported message must belong to the reported patron')
                 if m['expires']<=self.clock() and not db.execute('SELECT 1 FROM keepsakes WHERE user_id=? AND message_id=?',(uid,message_id)).fetchone(): raise Problem(404,'Message expired')
                 evidence=m['body']
+                attachment=db.execute('SELECT * FROM attachments WHERE message_id=?',(message_id,)).fetchone()
             rid=secrets.token_hex(16);now=int(self.clock())
             # Development retention only. Production evidence handling must be explicitly decided.
             db.execute('INSERT INTO reports VALUES(?,?,?,?,?,?,?)',(rid,uid,target,self.enc(reason),evidence,now,now+90*DAY))
+            if attachment:db.execute('INSERT INTO report_attachments VALUES(?,?,?,?)',(rid,attachment['data'],attachment['width'],attachment['height']))
         return {'id':rid,'retention_days':90}
     def delete_account(self, uid):
         with self.db() as db:

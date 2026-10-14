@@ -1,15 +1,18 @@
 'use strict';
 const $ = id => document.getElementById(id);
 let session = null, draft = null, activeThread = null, threads = [], matches = [], districts = [], refreshTimer = null, epoch = 0;
-let entranceAction = null, busy = false;
+let entranceAction = null, busy = false, previewUrl = null, renderedSignature = '';
+const revealedImages = new Set();
+function clearImageDraft(){if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=null;$('sendImage').reset();$('imagePreview').removeAttribute('src');$('imagePreview').hidden=true;}
+function appendImage(container,m){if(!m.image)return;const image=node('img');image.alt='Private picture shared in this conversation';image.className='message-image';image.hidden=!revealedImages.has(m.id);if(!image.hidden)image.src=m.image.url;const reveal=button(image.hidden?'View picture':'Hide picture',async()=>{image.hidden=!image.hidden;if(image.hidden){image.removeAttribute('src');revealedImages.delete(m.id);reveal.textContent='View picture';}else{revealedImages.add(m.id);image.src=m.image.url;reveal.textContent='Hide picture';}});image.addEventListener('error',()=>{image.hidden=true;image.removeAttribute('src');revealedImages.delete(m.id);reveal.textContent='Picture unavailable';status('Picture unavailable: it may have expired or access changed.');});container.append(reveal,image);}
 function status(message) { $('status').textContent = message; }
 function node(tag, text, cls) { const n = document.createElement(tag); if (text !== undefined) n.textContent = text; if (cls) n.className = cls; return n; }
 function button(text, action, cls = 'quiet') { const b = node('button', text, cls); b.type = 'button'; b.addEventListener('click', () => run(action)); return b; }
 function formData(form) { return Object.fromEntries(new FormData(form)); }
 async function api(path, method = 'GET', data) {
-  const headers = {}; if (data !== undefined) headers['Content-Type'] = 'application/json';
+  const binary=data instanceof Blob; const headers = {}; if (data !== undefined) headers['Content-Type'] = binary ? data.type : 'application/json';
   if (method !== 'GET' && session) headers['X-CSRF-Token'] = session.csrf;
-  const res = await fetch('/api/' + path, { method, credentials: 'same-origin', cache: 'no-store', headers, body: data === undefined ? undefined : JSON.stringify(data) });
+  const res = await fetch('/api/' + path, { method, credentials: 'same-origin', cache: 'no-store', headers, body: data === undefined ? undefined : binary ? data : JSON.stringify(data) });
   const result = await res.json();
   if (!res.ok) { if (res.status === 401 && session) signedOut(); throw new Error(result.error || 'Please try again.'); }
   return result;
@@ -25,7 +28,7 @@ function tab(name) {
   if (name !== 'trial') draft = null;
 }
 function signedOut() {
-  epoch++; clearInterval(refreshTimer); refreshTimer = null; session = null; activeThread = null; threads = []; matches = []; draft = null; entranceAction = null;
+  epoch++; revealedImages.clear(); renderedSignature=''; clearImageDraft(); clearInterval(refreshTimer); refreshTimer = null; session = null; activeThread = null; threads = []; matches = []; draft = null; entranceAction = null;
   for (const id of ['matches','memberMap','threads','messages','kept']) $(id).replaceChildren();
   $('recoveryCode').textContent = ''; $('messageBody').value = ''; $('account').hidden = true; $('entrance').hidden = false; $('logout').hidden = true; $('chat').hidden = true; $('keepCount').textContent = '0';
   $('signup').reset(); $('signin').reset(); $('recovery').reset(); tab('signin');
@@ -95,18 +98,18 @@ async function refreshInbox() {
   threads = await api('conversations'); $('threads').replaceChildren();
   if (!threads.length) $('threads').append(node('p','No conversations yet. Find a spark and send a hello.'));
   for (const t of threads) { const b = button(t.other_alias + ' · ' + (t.status === 'accepted' ? 'Conversation open' : t.incoming ? 'Would like to say hello' : 'Awaiting their hello'), () => openThread(t.id),'thread'); b.setAttribute('aria-pressed',String(activeThread?.id===t.id)); $('threads').append(b); }
-  if (activeThread) { const current = threads.find(t => t.id === activeThread.id); if (!current) { activeThread = null; $('chat').hidden = true; $('messages').replaceChildren(); } else activeThread = current; }
+  if (activeThread) { const current = threads.find(t => t.id === activeThread.id); if (!current) { activeThread = null; revealedImages.clear(); clearImageDraft(); renderedSignature=''; $('chat').hidden = true; $('messages').replaceChildren(); } else activeThread = current; }
 }
-async function openThread(id) { activeThread = threads.find(t => t.id === id); if (!activeThread) throw new Error('Conversation unavailable.'); $('messageBody').value = ''; await readMessages(); }
+async function openThread(id) { activeThread = threads.find(t => t.id === id); if (!activeThread) throw new Error('Conversation unavailable.'); $('messageBody').value = ''; clearImageDraft(); renderedSignature=''; await readMessages(); }
 async function readMessages() {
   if (!activeThread) return;
   const current = activeThread; const version = epoch; const messages = await api('conversations/' + current.id + '/messages');
   if (version !== epoch || activeThread?.id !== current.id) return;
   $('chat').hidden = false; $('chatTitle').textContent = current.other_alias;
-  $('chatNote').textContent = current.status === 'accepted' ? 'Private text conversation · messages expire after 14 days unless you keep your copy. Refreshes every 10 seconds while this view is open.' : current.incoming ? 'Accept only if you fancy a conversation. You can block at any time.' : 'Your hello is waiting for their acceptance.';
-  $('accept').hidden = current.status === 'accepted' || !current.incoming; $('send').hidden = current.status !== 'accepted'; $('messages').replaceChildren();
+  $('chatNote').textContent = current.status === 'accepted' ? 'Private text and picture conversation · messages expire after 14 days unless you keep your copy. Refreshes every 10 seconds while this view is open.' : current.incoming ? 'Accept only if you fancy a conversation. You can block at any time.' : 'Your hello is waiting for their acceptance.';
+  $('accept').hidden = current.status === 'accepted' || !current.incoming; $('send').hidden = current.status !== 'accepted'; $('sendImage').hidden=current.status!=='accepted'; const signature=JSON.stringify([current.id,current.status,messages]);if(signature===renderedSignature)return;renderedSignature=signature; $('messages').replaceChildren();
   for (const m of messages) {
-    const bubble = node('article',undefined,'bubble' + (m.sender === session.profile.id ? ' mine' : '')); bubble.append(node('p',m.body),node('small',m.saved ? 'Kept by you' : 'Expires ' + date(m.expires)));
+    const bubble = node('article',undefined,'bubble' + (m.sender === session.profile.id ? ' mine' : '')); if(m.body)bubble.append(node('p',m.body));appendImage(bubble,m);bubble.append(node('small',m.saved ? 'Kept by you' : 'Expires ' + date(m.expires)));
     bubble.append(button(m.saved ? 'Remove keepsake' : '♡ Keep this', async () => { await api('keepsakes/' + m.id,m.saved?'DELETE':'POST',m.saved?undefined:{}); await readMessages(); await refreshKeepsakes(); }));
     if (m.sender !== session.profile.id) bubble.append(button('Report this message', () => report(m.id)));
     $('messages').append(bubble);
@@ -118,9 +121,9 @@ $('send').addEventListener('submit', e => { e.preventDefault(); run(async () => 
 async function refreshKeepsakes() {
   const kept = await api('keepsakes'); $('keepCount').textContent = kept.length; $('kept').replaceChildren();
   if (!kept.length) $('kept').append(node('p','Nothing tucked away yet.'));
-  for (const m of kept) { const b = node('article',undefined,'bubble'); b.append(node('p',m.body),button('Remove keepsake', async () => { await api('keepsakes/'+m.id,'DELETE'); await refreshKeepsakes(); })); $('kept').append(b); }
+  for (const m of kept) { const b = node('article',undefined,'bubble'); if(m.body)b.append(node('p',m.body));appendImage(b,m);b.append(button('Remove keepsake', async () => { await api('keepsakes/'+m.id,'DELETE'); await refreshKeepsakes(); })); $('kept').append(b); }
 }
-$('block').addEventListener('click', () => run(async () => { if (!confirm('Block '+activeThread.other_alias+'? You will disappear from each other’s discovery and conversations.')) return; await api('block','POST',{target:activeThread.other}); activeThread = null; $('chat').hidden = true; $('messages').replaceChildren(); await refreshInbox(); await refreshKeepsakes(); status('Patron blocked.'); }));
+$('block').addEventListener('click', () => run(async () => { if (!confirm('Block '+activeThread.other_alias+'? You will disappear from each other’s discovery and conversations.')) return; await api('block','POST',{target:activeThread.other}); activeThread = null; revealedImages.clear(); clearImageDraft(); renderedSignature=''; $('chat').hidden = true; $('messages').replaceChildren(); await refreshInbox(); await refreshKeepsakes(); status('Patron blocked.'); }));
 async function report(message_id) { const reason = prompt('Describe your concern. This stores a local test report; it does not alert a support team.'); if (!reason?.trim()) return; await api('report','POST',{target:activeThread.other,reason,message_id}); status('Local test report saved under the separate 90-day evidence rule.'); }
 $('report').addEventListener('click', () => run(() => report()));
 $('editProfile').addEventListener('submit', e => { e.preventDefault(); run(async () => { const profile = await api('profile','POST',{...formData(e.target),visible:e.target.elements.visible.checked}); session.profile = profile; $('welcome').textContent = 'Welcome, '+profile.alias+'.'; status('Your introduction is saved.'); }); });
@@ -133,3 +136,6 @@ async function boot() {
   catch (e) { signedOut(); status(e.message === 'Sign in required' ? 'Use invented adult test details. Your accounts persist in the local database.' : e.message); }
 }
 boot();
+
+$('imageFile').addEventListener('change',()=>{if(previewUrl)URL.revokeObjectURL(previewUrl);previewUrl=null;$('imagePreview').hidden=true;$('imagePreview').removeAttribute('src');$('imageConsent').checked=false;const file=$('imageFile').files[0];if(!file)return;if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>5*1024*1024){$('imageFile').value='';status('Choose a still JPG, PNG or WebP up to 5 MB.');return;}previewUrl=URL.createObjectURL(file);$('imagePreview').src=previewUrl;$('imagePreview').hidden=false;});
+$('sendImage').addEventListener('submit',e=>{e.preventDefault();run(async()=>{const file=$('imageFile').files[0];if(!file||!$('imageConsent').checked)return;await api('conversations/'+activeThread.id+'/images','POST',file);clearImageDraft();await readMessages();status('Picture sent. The stored copy has no source metadata.');});});
