@@ -1,0 +1,86 @@
+"""Loopback-only development API; deliberately cannot run as production."""
+import argparse, json, os, re, threading, time
+from collections import defaultdict, deque
+from http.cookies import SimpleCookie
+from wsgiref.simple_server import make_server, WSGIRequestHandler
+from .service import Service, Problem, digest
+
+class App:
+    def __init__(self,service,origin='http://127.0.0.1:8080'):
+        self.service,self.origin=service,origin;self.attempts=defaultdict(deque);self.lock=threading.Lock()
+    def throttle(self,peer,kind,limit):
+        now=time.monotonic()
+        with self.lock:
+            for key in list(self.attempts):
+                q=self.attempts[key]
+                while q and q[0]<now-3600:q.popleft()
+                if not q:del self.attempts[key]
+            q=self.attempts[(peer,kind)]
+            if len(q)>=limit:raise Problem(429,'Too many attempts; try later')
+            q.append(now)
+    def __call__(self,env,start):
+        headers=[]
+        try:
+            method,path=env['REQUEST_METHOD'],env.get('PATH_INFO','')
+            if env.get('HTTP_HOST')!=self.origin.split('://',1)[1]:raise Problem(403,'Unexpected host')
+            if method not in ('GET','POST','DELETE'):raise Problem(405,'Method not allowed')
+            if method!='GET' and env.get('HTTP_ORIGIN') not in (None,self.origin):raise Problem(403,'Unexpected origin')
+            data={}
+            if method=='POST':
+                if env.get('CONTENT_TYPE','').split(';')[0]!='application/json':raise Problem(415,'Use application/json')
+                try:length=int(env.get('CONTENT_LENGTH') or '0')
+                except ValueError:raise Problem(400,'Invalid request size')
+                if not 0<length<=16384:raise Problem(413,'Request too large or empty')
+                try:data=json.loads(env['wsgi.input'].read(length))
+                except (ValueError,UnicodeDecodeError):raise Problem(400,'Invalid JSON')
+                if not isinstance(data,dict):raise Problem(400,'JSON object required')
+            cookies=SimpleCookie();cookies.load(env.get('HTTP_COOKIE',''))
+            token=cookies['am_session'].value if 'am_session' in cookies else ''
+            public=path in ['/api/register','/api/login','/api/recover','/api/health']
+            uid=None if public else self.service.authenticate(token,env.get('HTTP_X_CSRF_TOKEN'),method!='GET')
+            peer=env.get('REMOTE_ADDR','unknown');s=self.service
+            if path=='/api/health' and method=='GET':result={'status':'local-development','production_enabled':False}
+            elif path=='/api/register' and method=='POST':self.throttle(peer,'register',10);result=s.register(data)
+            elif path=='/api/login' and method=='POST':
+                self.throttle(peer,'login',30);token,result=s.login(data.get('login'),data.get('password'))
+                headers.append(('Set-Cookie',f'am_session={token}; Path=/api; HttpOnly; SameSite=Strict; Max-Age=604800'))
+            elif path=='/api/recover' and method=='POST':self.throttle(peer,'recover',10);result=s.recover(data.get('login'),data.get('recovery_code'),data.get('password'))
+            elif path=='/api/session' and method=='GET':
+                with s.db() as db:row=db.execute('SELECT csrf FROM sessions WHERE token=?',(digest(token),)).fetchone()
+                result={'csrf':row['csrf'],'profile':s.profile(uid),'membership':s.membership(uid)}
+            elif path=='/api/logout' and method=='POST':
+                s.logout(token);headers.append(('Set-Cookie','am_session=; Path=/api; HttpOnly; SameSite=Strict; Max-Age=0'));result={'logged_out':True}
+            elif path=='/api/profile' and method=='GET':result=s.profile(uid)
+            elif path=='/api/profile' and method=='POST':result=s.edit_profile(uid,data)
+            elif path=='/api/discover' and method=='POST':result=s.discover(uid,data.get('district'),data.get('radius_km',25))
+            elif path=='/api/conversations' and method=='GET':result=s.inbox(uid)
+            elif path=='/api/conversations' and method=='POST':result=s.request(uid,data.get('target'))
+            elif (m:=re.fullmatch(r'/api/conversations/([a-f0-9]{32})/accept',path)) and method=='POST':result=s.accept(uid,m[1])
+            elif (m:=re.fullmatch(r'/api/conversations/([a-f0-9]{32})/messages',path)) and method=='GET':result=s.messages(uid,m[1])
+            elif (m:=re.fullmatch(r'/api/conversations/([a-f0-9]{32})/messages',path)) and method=='POST':self.throttle(uid,'send',300);result=s.send(uid,m[1],data.get('body'))
+            elif path=='/api/keepsakes' and method=='GET':result=s.keepsakes(uid)
+            elif (m:=re.fullmatch(r'/api/keepsakes/([a-f0-9]{32})',path)) and method=='POST':result=s.keep(uid,m[1])
+            elif (m:=re.fullmatch(r'/api/keepsakes/([a-f0-9]{32})',path)) and method=='DELETE':result=s.unkeep(uid,m[1])
+            elif path=='/api/block' and method=='POST':result=s.block(uid,data.get('target'))
+            elif path=='/api/report' and method=='POST':result=s.report(uid,data.get('target'),data.get('reason'),data.get('message_id'))
+            elif path=='/api/account' and method=='DELETE':result=s.delete_account(uid)
+            else:raise Problem(404,'Endpoint unavailable')
+            status=200
+        except Problem as e:status,result=e.status,{'error':e.message}
+        except Exception:status,result=500,{'error':'Local service error'}
+        body=json.dumps(result,ensure_ascii=False).encode()
+        names={200:'OK',400:'Bad Request',401:'Unauthorized',402:'Payment Required',403:'Forbidden',404:'Not Found',405:'Method Not Allowed',409:'Conflict',413:'Content Too Large',415:'Unsupported Media Type',429:'Too Many Requests',500:'Internal Server Error'}
+        start(f'{status} {names[status]}',[('Content-Type','application/json; charset=utf-8'),('Content-Length',str(len(body))),('Cache-Control','no-store'),('X-Content-Type-Options','nosniff'),('Content-Security-Policy',"default-src 'none'; frame-ancestors 'none'"),*headers]);return [body]
+class QuietHandler(WSGIRequestHandler):
+    def log_message(self,*args):pass
+
+def main():
+    p=argparse.ArgumentParser(description=__doc__);p.add_argument('--db',default='runtime/anony-mouse.sqlite3');p.add_argument('--port',type=int,default=8080);p.add_argument('--purge',action='store_true');p.add_argument('--seed-test-districts',action='store_true');args=p.parse_args()
+    key=os.environ.get('ANONY_MOUSE_DATA_KEY')
+    if not key:raise SystemExit('Set ANONY_MOUSE_DATA_KEY through your environment; never commit it.')
+    s=Service(args.db,key,time.time)
+    if args.seed_test_districts:s.seed_districts([('GU2',51.24,-.59),('GU1',51.24,-.56),('SW1A',51.50,-.14)])
+    if args.purge:print(s.purge());return
+    origin=f'http://127.0.0.1:{args.port}';print(f'Local development API: {origin}/api/health. Fictional test adults only; production disabled.')
+    with make_server('127.0.0.1',args.port,App(s,origin),handler_class=QuietHandler) as server:server.serve_forever()
+if __name__=='__main__':main()
