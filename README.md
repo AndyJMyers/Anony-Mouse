@@ -22,7 +22,7 @@ Discretion from the neighbours is the aim. Patrons control what they disclose, b
 
 ## Project status
 
-Interactive static concept preview: fictional postcode matches, scripted chat, session-only keepsakes and a two-step signup demo. No real accounts, payment collection or production messaging service yet.
+Interactive static concept preview: fictional postcode matches, mood filters, surprise introductions, optional opening lines, scripted chat, session-only keepsakes and a two-step signup demo. No real accounts, payment collection or production messaging service yet.
 
 Open `index.html` to explore the design. GitHub Pages publishes the project from the root of `main`. The commercial service will require suitable backend hosting; GitHub Pages is not the paid-service host.
 
@@ -35,6 +35,10 @@ See [the product brief](docs/product-brief.md) for scope and [the prioritised TO
 A separate [local backend](backend/README.md) now implements persistent accounts, district-based discovery and private text conversations. The connected member lounge at `http://127.0.0.1:8080/members.html` supports signup, sign-in, profile editing, schematic district discovery, accepted conversation requests, private text messages, keepsakes, blocking, local reports, recovery and deletion. Fourteen automated tests cover the core and the HTTP journey, including cookies, access isolation and static-file boundaries. Production use is disabled; the public mockup remains fictional.
 
 See the [foundation review](docs/foundation-review.md) for hosting, payment, age assurance and privacy findings and unresolved provider requirements.
+
+## Android track
+
+See [the Android development track](docs/android-track.md) for a shared minimal interface and delivery order. The native app will use the same account/message service; no Android build has been released yet.
 
 ## Artwork
 

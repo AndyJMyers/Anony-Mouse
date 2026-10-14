@@ -79,3 +79,13 @@ GitHub Pages remains the static concept showcase. Real membership, sensitive exc
 - [ ] Private image attachments and metadata removal, national district coverage, payment integration and live-user readiness checks.
 
 The local interface uses fictional adult accounts. The Pages showcase does not call the backend or open public registration.
+
+## Android track — shared minimal interface
+
+- [x] Establish [the Android track and shared interface contract](docs/android-track.md).
+- [ ] Keep website and Android aligned around Sparks and Conversations, with quiet secondary controls.
+- [ ] Settle hosted API/mobile authentication and current distribution/content/payment requirements.
+- [ ] Build the first Kotlin/Compose device client against the shared test backend.
+- [ ] Match images, expiry, keepsakes, block/report, recovery and deletion across clients before release.
+
+Visual excitement comes from the mice, colour, gentle pulses and optional playful shortcuts—not extra screens, mandatory questionnaires or fake activity. Native Android development follows the production service foundation; no Android app has been built or published yet.
