@@ -108,3 +108,11 @@ Visual excitement comes from the mice, colour, gentle pulses and optional playfu
 - [ ] Production private object store, isolated decoding workers, live age/content/provider requirements and backup retention.
 
 Twenty-two tests now cover the local core/HTTP interface. The real service remains undeployed; image functionality is available only in the local test lounge.
+
+## Privacy and UK legal checkpoint — 17 October 2026
+
+- [x] Add sourced plain-English [data and privacy statement](README.md#data-and-privacy-statement), mapping minimum fields to purpose, recipients and retention.
+- [ ] Before real users: final controller/contact details, named provider contracts/roles/countries/retention and UK transfer safeguards; DPIA, lawful-basis/consent records and rights/age-appeal process.
+- [ ] Implement production expiry and backup deletion; define dormant-account and sender/recipient keepsake/deletion rules; separate tax ledger from removable accounts. The README's new operational limits are proposed targets, not implemented guarantees.
+- [ ] Implement the current NCA CSEA reporting workflow and regulation 8 evidence preservation, including associated data: one year for specified material/data and five years for report references. The development 90-day report timer is insufficient for these cases. Establish valid sensitive/offence-data conditions and restricted access.
+- [ ] Remove external Google Fonts requests or serve fonts locally before member launch; publish the finished notice in website and Android, not only GitHub.
