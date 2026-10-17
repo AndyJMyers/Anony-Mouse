@@ -1,5 +1,7 @@
 # Provider decision and pilot cost — 14 October 2026
 
+> **17 October 2026 review supersedes the earlier explicit-image and pricing assumptions below.** See [the current age/access assessment](age-access-assessment.md), [initial illegal-risk register](illegal-risk-register.md), [commercial-readiness decision](commercial-readiness.md) and [ready-to-submit enquiries](provider-enquiries.md). No supplier acceptance or complete quote has been obtained.
+
 ## Scope update — 17 October 2026
 
 The [agreed policy](../README.md#conduct-privacy-and-reporting-policy) now prohibits sexually explicit content in profiles and DMs. This supersedes the earlier explicit-image assumptions below. Historical prices are not new quotes for this revised service. Reclassify the actual non-explicit adult introductions service with each candidate; do not assume a prohibited-content policy automatically changes payment fees, provider acceptance or age-assurance duties. No enquiry has been sent.

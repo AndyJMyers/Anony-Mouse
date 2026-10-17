@@ -120,6 +120,8 @@ See the [foundation review](docs/foundation-review.md) for hosting, payment, age
 
 ## Provider selection and deployment
 
+The [17 October age/access assessment](docs/age-access-assessment.md) concludes that our planned ungated member service is likely to attract under-18s despite its non-explicit rule. An age-only 18+ gate is the recommended launch design, subject to effectiveness/privacy review; a checkbox/payment-only alternative has not been established as adequate. See the [initial illegal-risk register](docs/illegal-risk-register.md), [commercial findings and outstanding acceptance gates](docs/commercial-readiness.md), and [prepared provider enquiries](docs/provider-enquiries.md). These are pre-launch findings: no real service, provider approval, purchase or enquiry submission is claimed.
+
 See [the provider decision and cost model](docs/provider-decision.md) and [the deployment plan](docs/deployment-plan.md). Accounts now start unpaid; an internal monthly-payment ledger is tested, but real provider verification/checkout and production deployment are pending.
 
 ## Android track

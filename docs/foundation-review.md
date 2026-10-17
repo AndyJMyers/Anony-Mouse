@@ -1,5 +1,7 @@
 # Foundation review — 14 October 2026
 
+> **17 October 2026 review supersedes the earlier explicit-image and pricing assumptions below.** See [the current age/access assessment](age-access-assessment.md), [initial illegal-risk register](illegal-risk-register.md), [commercial-readiness decision](commercial-readiness.md) and [ready-to-submit enquiries](provider-enquiries.md). No supplier acceptance or complete quote has been obtained.
+
 ## Implementation direction
 
 Preserve the existing static design. Keep production backend code portable rather than tied to GitHub Pages or a payment provider. A small self-hosted service is a candidate; no commercial host has been purchased or approved for this particular project. The Python/SQLite core is local development only and is not a final production stack decision.

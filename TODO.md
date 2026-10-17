@@ -122,3 +122,12 @@ Twenty-two tests now cover the local core/HTTP interface. The real service remai
 - [x] Record the [non-explicit, private-conversation and accountable-reporting policy](README.md#conduct-privacy-and-reporting-policy); supersede the prior explicit-image plan in the product brief and provider/deployment scope.
 - [ ] Assess age/access safeguards for the revised service; no automatic age-check exemption or removal is authorised by the content ban alone.
 - [ ] Implement prompt restricted report review, content removal/account restrictions, serious-case escalation, decision reasons/review, statutory reporting/preservation and protection for good-faith reporters. Distinguish knowingly false/abusive reports from unproven allegations. These operating processes are not yet production-ready.
+
+## Steps 1–2 research checkpoint — 17 October 2026
+
+- [x] Prepare dated children's access conclusion, initial children's risks and minimal-data age-gate specification: [assessment](docs/age-access-assessment.md).
+- [x] Prepare the current 18-priority-kind [initial illegal-risk register](docs/illegal-risk-register.md), with unvalidated residual risks and remaining code/control review clearly identified.
+- [x] Recheck provider fit/prices/privacy and prepare specific enquiries: [commercial decision](docs/commercial-readiness.md), [enquiry packet](docs/provider-enquiries.md).
+- [ ] Operator review/sign-off, effective-control evidence and complete current-code applicability review; finalise age approach. Do not infer legal clearance from the research documents.
+- [ ] Obtain written supplier scope/privacy acceptance and complete hosting/payment quotes under confirmed legal operator/contact details. Not sent or obtained yet.
+- [ ] Resolve those gates before beginning later implementation/deployment/testing steps.
