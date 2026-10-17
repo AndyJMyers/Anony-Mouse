@@ -2,6 +2,10 @@
 
 This plan uses the provisional selections in [provider-decision.md](provider-decision.md). No server has been provisioned. The current service remains loopback-only and production-disabled; do not reverse-proxy it onto the Internet.
 
+## Policy prerequisite — 17 October 2026
+
+Follow the [agreed non-explicit conduct/reporting policy](../README.md#conduct-privacy-and-reporting-policy). The former explicit-image scope is superseded. Assess children's access and risks under the actual revised design before deciding whether/how to retain age assurance; do not remove safeguards on the strength of a terms-only ban. References to the age provider below remain conditional design work, not a finding that a specific check is mandatory for the revised service. Add restricted report review, prompt removal/suspension, documented decisions and appeals, malicious-report handling and statutory NCA evidence/reporting workflows before real users. Do not routinely read private conversations; access to investigate credible concerns must be necessary and controlled.
+
 ## Topology
 
 - **anonymouses.com:** existing GitHub Pages showcase. Retain its current DNS/HTTPS configuration.

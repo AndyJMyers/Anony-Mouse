@@ -1,5 +1,9 @@
 # Provider decision and pilot cost — 14 October 2026
 
+## Scope update — 17 October 2026
+
+The [agreed policy](../README.md#conduct-privacy-and-reporting-policy) now prohibits sexually explicit content in profiles and DMs. This supersedes the earlier explicit-image assumptions below. Historical prices are not new quotes for this revised service. Reclassify the actual non-explicit adult introductions service with each candidate; do not assume a prohibited-content policy automatically changes payment fees, provider acceptance or age-assurance duties. No enquiry has been sent.
+
 ## Decision
 
 Keep anonymouses.com on GitHub Pages for the public showcase. Prepare the live member service at **app.anonymouses.com**, with its UI and API on the same origin. This preserves cookie/CSRF isolation without inventing a cross-origin shortcut. That subdomain is proposed, not deployed or added to DNS.
@@ -39,11 +43,11 @@ CCBill's AUP also restricts unsolicited bulk email, including campaigns sent thr
 
 ## Provider questions ready for enquiry
 
-**Hosting:** Confirm this exact VPS and a UK/EU region support pseudonymous adult dating, consensual private explicit images, encrypted messages, PostgreSQL, private media and independent encrypted backups. Specify data-processing terms, snapshot retention/restore, renewal taxes, overage, backup options and any content obligations. No bulk email would be sent from the VPS.
+**Hosting:** Confirm this exact VPS and a UK/EU region support pseudonymous adult dating with an enforced prohibition on sexually explicit content, permitted non-explicit private images, encrypted messages, PostgreSQL, private media and independent encrypted backups. Specify data-processing terms, snapshot retention/restore, renewal taxes, overage, backup options and any content obligations. No bulk email would be sent from the VPS.
 
 **Age assurance:** Confirm an age-only hosted flow for this service, the applicable borderline buffer/accuracy evidence and alternative accessible methods. Give the complete per-attempt/fallback/retry price and free-credit eligibility after November 1; specify retention, deletion, region, processor terms, availability and service acceptance. We want a signed over-18 result, not public identity validation.
 
-**Payments:** Classify the actual private adult-image dating service, including consensual explicit DMs, rather than just the landing page. Quote MCC, all scheme/onboarding fees, transaction/fixed fees, reserve, payout, refund/chargeback and minimum-ticket costs for £10 monthly single purchases. State obligations for depicted-person age/consent/content review, private exchanges and publicity campaigns. Can a manual £1 day purchase be supported economically? No automatic rebilling is requested.
+**Payments:** Classify the revised adult introductions service with non-explicit private messages/images and a genuine ban on pornography, rather than just the landing page. Quote MCC, all scheme/onboarding fees, transaction/fixed fees, reserve, payout, refund/chargeback and minimum-ticket costs for £10 monthly single purchases. State obligations for depicted-person age/consent/content review, private exchanges and publicity campaigns. Can a manual £1 day purchase be supported economically? No automatic rebilling is requested.
 
 These enquiries are prepared, not sent. Legal operator/contact details are needed for actual onboarding. No card or identity information has been submitted.
 

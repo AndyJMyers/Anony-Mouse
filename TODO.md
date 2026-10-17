@@ -116,3 +116,9 @@ Twenty-two tests now cover the local core/HTTP interface. The real service remai
 - [ ] Implement production expiry and backup deletion; define dormant-account and sender/recipient keepsake/deletion rules; separate tax ledger from removable accounts. The README's new operational limits are proposed targets, not implemented guarantees.
 - [ ] Implement the current NCA CSEA reporting workflow and regulation 8 evidence preservation, including associated data: one year for specified material/data and five years for report references. The development 90-day report timer is insufficient for these cases. Establish valid sensitive/offence-data conditions and restricted access.
 - [ ] Remove external Google Fonts requests or serve fonts locally before member launch; publish the finished notice in website and Android, not only GitHub.
+
+## Agreed conduct-policy revision — 17 October 2026
+
+- [x] Record the [non-explicit, private-conversation and accountable-reporting policy](README.md#conduct-privacy-and-reporting-policy); supersede the prior explicit-image plan in the product brief and provider/deployment scope.
+- [ ] Assess age/access safeguards for the revised service; no automatic age-check exemption or removal is authorised by the content ban alone.
+- [ ] Implement prompt restricted report review, content removal/account restrictions, serious-case escalation, decision reasons/review, statutory reporting/preservation and protection for good-faith reporters. Distinguish knowingly false/abusive reports from unproven allegations. These operating processes are not yet production-ready.

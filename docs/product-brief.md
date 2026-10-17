@@ -95,8 +95,10 @@ A small district table or a server-side outward-code lookup cached on demand is 
 
 Brand: **Anony-Mouses** — the deliberate plural celebrates a community of little mices. Domain owned by the founder: **anonymouses.com**. Domain/DNS connection is a separate deployment task and has not been configured here.
 
-## Confirmed private-content approach
+## Confirmed private-content approach — revised 17 October 2026
 
-The founder confirms consensual explicit image exchange between adults. The desired culture is libertarian, with minimal intervention into lawful adult tastes, fantasies and arrangements. Conversation and image consent should be explicit and revocable; blocking and reporting remain available. Enforcement focuses on concrete abuse such as underage content, non-consensual intimate imagery, coercion, harassment, fraud and unlawful material. Required provider and age-assurance obligations still apply; public pseudonyms do not require public identity validation.
+The [README conduct, privacy and reporting policy](../README.md#conduct-privacy-and-reporting-policy) is authoritative. It supersedes the earlier explicit-image proposal: sexually explicit pictures, videos and written messages are prohibited, including consensual DMs. Flirtation and non-graphic statements of intention are allowed. Any image-sharing functionality is for permitted non-explicit content only; the founder has not adopted a text-only launch restriction.
 
-The upfront membership payment may add friction to misuse. It is not age assurance, identity validation or a replacement for private-image access controls. Keep courtesy, consent, blocking and reporting; no moral policing of consensual adult interests.
+No routine reading of private conversations. Investigate reports and other credible indications promptly, restrict credible serious risks while reviewing, remove confirmed prohibited material and remove accounts where warranted. No three-strike entitlement for serious or illegal conduct. Make required reports to the NCA/police and preserve evidence lawfully. Distinguish malicious reporting from mistaken or unproven good-faith complaints; provide reasons and review where lawful and safe.
+
+The service remains adults-only. Complete the revised children's access/risk assessments and settle necessary age/access safeguards before changing the planned age gate. Payment and terms alone do not establish children cannot access it. No claim of a regulatory exemption has been made. The development image functionality is not evidence that production moderation or compliance is ready.
